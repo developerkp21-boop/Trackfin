@@ -1,0 +1,153 @@
+TrackFin Route Map and Access Guide
+===================================
+
+Summary
+- Public routes: login/register/forgot/reset + NotFound
+- Protected routes: all dashboard pages under DashboardLayout
+- Admin routes: all /admin/* pages (role must be admin)
+- Route protection implementation: src/routes/ProtectedRoute.jsx and src/routes/AdminRoute.jsx
+- Route definitions: src/routes/AppRoutes.jsx
+- Sidebar navigation: src/routes/navigation.js + src/components/Sidebar.jsx
+
+Protection Logic (How it works)
+- ProtectedRoute checks auth state from AuthContext and redirects to /login if not authenticated.
+  File: src/routes/ProtectedRoute.jsx
+- AdminRoute checks user.role === 'admin'. Non-admins are redirected to /dashboard.
+  File: src/routes/AdminRoute.jsx
+- All protected pages are rendered inside DashboardLayout.
+  File: src/layouts/DashboardLayout.jsx
+
+API Calls (Where they happen)
+- /api/login  -> AuthContext.login
+- /api/register -> AuthContext.register
+- /api/logout -> AuthContext.logout
+- /api/profile -> AuthContext.refreshProfile
+Files:
+- src/context/AuthContext.jsx
+- src/services/api.js
+
+Routes and Pages
+1) / (redirect)
+- Purpose: Redirects to /dashboard
+- Protection: None (public redirect)
+- Related files: src/routes/AppRoutes.jsx
+
+2) /login
+- Page: Login (src/pages/auth/Login.jsx)
+- Purpose: Sign in
+- Protection: Public
+- API: /api/login via AuthContext.login
+- Related files: src/layouts/AuthLayout.jsx, src/context/AuthContext.jsx
+
+3) /register
+- Page: Register (src/pages/auth/Register.jsx)
+- Purpose: Create account
+- Protection: Public
+- API: /api/register via AuthContext.register
+- Related files: src/layouts/AuthLayout.jsx, src/context/AuthContext.jsx
+
+4) /forgot-password
+- Page: ForgotPassword (src/pages/auth/ForgotPassword.jsx)
+- Purpose: Request reset link (demo toast only)
+- Protection: Public
+- API: None (mock only)
+- Related files: src/layouts/AuthLayout.jsx
+
+5) /reset-password
+- Page: ResetPassword (src/pages/auth/ResetPassword.jsx)
+- Purpose: Set new password (demo toast only)
+- Protection: Public
+- API: None (mock only)
+- Related files: src/layouts/AuthLayout.jsx
+
+6) /dashboard
+- Page: Overview (src/pages/dashboard/Overview.jsx)
+- Purpose: User dashboard overview
+- Protection: ProtectedRoute (auth required)
+- API: None (uses mock data)
+- Related files: src/layouts/DashboardLayout.jsx, src/components/StatCard.jsx, src/data/mockData.js
+
+7) /transactions
+- Page: TransactionList (src/pages/transactions/TransactionList.jsx)
+- Purpose: View/search/filter transactions
+- Protection: ProtectedRoute
+- API: None (uses mock data)
+- Related files: src/components/Badge.jsx, src/components/Pagination.jsx, src/data/mockData.js
+
+8) /transactions/add
+- Page: AddTransaction (src/pages/transactions/AddTransaction.jsx)
+- Purpose: Add a transaction
+- Protection: ProtectedRoute
+- API: None (form only)
+- Related files: src/components/Input.jsx, src/components/Select.jsx
+
+9) /reports/monthly
+- Page: MonthlyReport (src/pages/reports/MonthlyReport.jsx)
+- Purpose: Monthly report charts
+- Protection: ProtectedRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+10) /reports/yearly
+- Page: YearlyReport (src/pages/reports/YearlyReport.jsx)
+- Purpose: Yearly report charts
+- Protection: ProtectedRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+11) /profile
+- Page: Profile (src/pages/profile/Profile.jsx)
+- Purpose: View/update profile details
+- Protection: ProtectedRoute
+- API: None (updates locally in AuthContext.updateProfile)
+- Related files: src/context/AuthContext.jsx
+
+12) /admin
+- Page: AdminOverview (src/pages/admin/AdminOverview.jsx)
+- Purpose: Admin dashboard overview
+- Protection: ProtectedRoute + AdminRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+13) /admin/users
+- Page: ManageUsers (src/pages/admin/ManageUsers.jsx)
+- Purpose: Manage user accounts
+- Protection: ProtectedRoute + AdminRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+14) /admin/users/:id
+- Page: UserDetails (src/pages/admin/UserDetails.jsx)
+- Purpose: View user detail + recent activity
+- Protection: ProtectedRoute + AdminRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+15) /admin/transactions
+- Page: AdminTransactions (src/pages/admin/AdminTransactions.jsx)
+- Purpose: View all platform transactions
+- Protection: ProtectedRoute + AdminRoute
+- API: None (uses mock data)
+- Related files: src/data/mockData.js
+
+16) /admin/settings
+- Page: SystemSettings (src/pages/admin/SystemSettings.jsx)
+- Purpose: Platform settings and security
+- Protection: ProtectedRoute + AdminRoute
+- API: None (UI only)
+- Related files: src/components/Input.jsx
+
+17) * (not found)
+- Page: NotFound (src/pages/NotFound.jsx)
+- Purpose: 404
+- Protection: Public
+- API: None
+
+Navigation Separation (User vs Admin)
+- Sidebar nav source: src/routes/navigation.js
+- Sidebar component: src/components/Sidebar.jsx (shows role badge and admin/user label)
+- Navbar component: src/components/Navbar.jsx (shows role badge and header)
+
+Notes
+- Auth state is stored in localStorage: trackfin-token and trackfin-user.
+- In DEV mode, login/register use demo data if API fails (see AuthContext).
