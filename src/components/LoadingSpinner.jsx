@@ -1,7 +1,7 @@
 const LoadingSpinner = ({ label = 'Loading...' }) => (
-  <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border-subtle bg-bg-secondary px-6 py-8 text-text-secondary dark:border-border-strong dark:bg-bg-card">
-    <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
-    <p className="text-sm font-medium">{label}</p>
+  <div className="d-flex flex-column align-items-center justify-content-center gap-2 rounded-4 border border-dashed border-app-subtle bg-body-tertiary px-4 py-4 text-app-secondary">
+    <div className="spinner-border text-success" role="status" aria-hidden="true" />
+    <p className="small fw-medium mb-0">{label}</p>
   </div>
 )
 

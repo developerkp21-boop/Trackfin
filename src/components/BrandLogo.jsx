@@ -1,20 +1,19 @@
 import { Landmark } from 'lucide-react'
 
 const BrandLogo = ({ size = 'md', label = true }) => {
-  const sizeClasses =
-    size === 'lg' ? 'text-xl' : size === 'sm' ? 'text-sm' : 'text-base'
+  const textSize = size === 'lg' ? 'h5' : size === 'sm' ? 'small' : 'h6'
 
   return (
-    <div className="flex items-center gap-2 text-text-primary">
-      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-600 text-on-brand shadow-soft">
-        <Landmark className="h-5 w-5" />
+    <div className="d-flex align-items-center gap-2 text-app-primary">
+      <span className="d-flex align-items-center justify-content-center rounded-3 bg-success text-white shadow-sm fw-bold btn-icon">
+        <Landmark size={18} />
       </span>
       {label && (
-        <div className="leading-tight">
-          <p className={`font-display font-semibold tracking-tight ${sizeClasses}`}>
-            TrackFin
+        <div className="lh-sm">
+          <p className={`font-display fw-bold mb-0 ${textSize} letter-space-tight`}>TrackFin</p>
+          <p className="text-app-secondary mb-0" style={{ fontSize: '0.72rem' }}>
+            Ledger Intelligence
           </p>
-          <p className="text-xs text-text-muted">Ledger Intelligence</p>
         </div>
       )}
     </div>

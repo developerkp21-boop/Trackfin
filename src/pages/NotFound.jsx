@@ -2,19 +2,14 @@ import { Link } from 'react-router-dom'
 import Card from '../components/Card'
 
 const NotFound = () => (
-  <div className="flex min-h-screen items-center justify-center px-6">
-    <Card className="max-w-md text-center">
-      <p className="text-sm uppercase tracking-[0.3em] text-ink-400">404</p>
-      <h1 className="mt-4 text-3xl font-semibold text-ink-900 dark:text-on-brand">
-        Page not found
-      </h1>
-      <p className="mt-3 text-sm text-ink-500">
+  <div className="min-vh-100 d-flex align-items-center justify-content-center px-3">
+    <Card className="text-center" style={{ maxWidth: '28rem' }}>
+      <p className="small text-uppercase letter-space-wide text-app-muted mb-2">404</p>
+      <h1 className="h2 fw-semibold text-app-primary mb-3">Page not found</h1>
+      <p className="text-app-secondary mb-4">
         The page you are looking for does not exist or has been moved.
       </p>
-      <Link
-        to="/dashboard"
-        className="mt-6 inline-flex items-center justify-center rounded-xl bg-button-primary px-4 py-2.5 text-sm font-semibold text-button-text shadow-soft transition hover:bg-button-hover"
-      >
+      <Link to="/dashboard" className="btn btn-success text-white rounded-3 px-4">
         Back to dashboard
       </Link>
     </Card>

@@ -20,16 +20,16 @@ const ForgotPassword = () => {
       title="Reset your password"
       subtitle="We will send you a secure reset link."
       footer={
-        <p>
+        <p className="mb-0">
           Remembered your password?{' '}
-          <Link className="font-semibold text-brand-600 hover:text-brand-700" to="/login">
+          <Link className="fw-semibold text-success text-decoration-none" to="/auth?tab=signin">
             Back to sign in
           </Link>
         </p>
       }
     >
-      <Card className="space-y-6">
-        <form className="space-y-5" onSubmit={handleSubmit}>
+      <Card>
+        <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
           <Input
             label="Email address"
             name="email"
@@ -38,13 +38,11 @@ const ForgotPassword = () => {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-100 mt-2">
             Send reset link
           </Button>
         </form>
-        <div className="text-xs text-text-secondary">
-          For demo purposes, use any email to simulate a reset flow.
-        </div>
+        <div className="small text-app-secondary mt-3">For demo purposes, use any email to simulate a reset flow.</div>
       </Card>
     </AuthLayout>
   )

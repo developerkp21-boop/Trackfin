@@ -2,18 +2,18 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Button from './Button'
 
 const Pagination = ({ page, totalPages, onPageChange }) => (
-  <div className="flex items-center justify-between">
-    <p className="text-xs text-text-secondary">
+  <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+    <p className="small text-app-secondary mb-0">
       Page {page} of {totalPages}
     </p>
-    <div className="flex items-center gap-2">
+    <div className="d-flex align-items-center gap-2">
       <Button
         variant="outline"
         className="px-3"
         disabled={page === 1}
         onClick={() => onPageChange(page - 1)}
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft size={16} />
         Prev
       </Button>
       <Button
@@ -23,7 +23,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => (
         onClick={() => onPageChange(page + 1)}
       >
         Next
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight size={16} />
       </Button>
     </div>
   </div>

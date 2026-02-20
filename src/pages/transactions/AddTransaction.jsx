@@ -28,63 +28,58 @@ const AddTransaction = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Add Transaction"
-        subtitle="Log a new credit or debit activity into your ledger."
-      />
+    <div className="d-flex flex-column gap-4">
+      <PageHeader title="Add Transaction" subtitle="Log a new credit or debit activity into your ledger." />
 
-      <Card className="space-y-6">
-        <div className="flex flex-col gap-3 sm:flex-row">
+      <Card>
+        <div className="d-flex flex-column flex-sm-row gap-2 mb-4">
           <button
             type="button"
             onClick={() => setType('credit')}
-            className={`flex-1 rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-              type === 'credit'
-                ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
-                : 'border-ink-200 text-ink-500 dark:border-ink-700 dark:text-ink-300'
-            }`}
+            className={`btn rounded-3 py-2 ${
+              type === 'credit' ? 'btn-success text-white' : 'btn-outline-secondary'
+            } w-100`}
           >
             Credit
           </button>
           <button
             type="button"
             onClick={() => setType('debit')}
-            className={`flex-1 rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-              type === 'debit'
-                ? 'border-blush-500 bg-blush-50 text-blush-600'
-                : 'border-ink-200 text-ink-500 dark:border-ink-700 dark:text-ink-300'
-            }`}
+            className={`btn rounded-3 py-2 ${
+              type === 'debit' ? 'btn-danger text-white' : 'btn-outline-secondary'
+            } w-100`}
           >
             Debit
           </button>
         </div>
 
-        <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
-          <Input
-            label="Amount"
-            name="amount"
-            type="number"
-            placeholder="0.00"
-            value={formValues.amount}
-            onChange={handleChange}
-          />
-          <Select label="Category" name="category" value={formValues.category} onChange={handleChange}>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </Select>
-          <Input
-            label="Date"
-            name="date"
-            type="date"
-            value={formValues.date}
-            onChange={handleChange}
-          />
-          <Input label="Reference" name="reference" placeholder="Invoice or memo" />
-          <div className="md:col-span-2">
+        <form className="row g-3" onSubmit={handleSubmit}>
+          <div className="col-md-6">
+            <Input
+              label="Amount"
+              name="amount"
+              type="number"
+              placeholder="0.00"
+              value={formValues.amount}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="col-md-6">
+            <Select label="Category" name="category" value={formValues.category} onChange={handleChange}>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="col-md-6">
+            <Input label="Date" name="date" type="date" value={formValues.date} onChange={handleChange} />
+          </div>
+          <div className="col-md-6">
+            <Input label="Reference" name="reference" placeholder="Invoice or memo" />
+          </div>
+          <div className="col-12">
             <TextArea
               label="Description"
               name="description"
@@ -93,11 +88,13 @@ const AddTransaction = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="md:col-span-2 flex items-center justify-end gap-3">
-            <Button variant="ghost" type="button">
+          <div className="col-12 d-flex flex-column flex-sm-row justify-content-sm-end gap-2">
+            <Button variant="ghost" type="button" className="btn-mobile-block">
               Cancel
             </Button>
-            <Button type="submit">Save Transaction</Button>
+            <Button type="submit" className="btn-mobile-block">
+              Save Transaction
+            </Button>
           </div>
         </form>
       </Card>

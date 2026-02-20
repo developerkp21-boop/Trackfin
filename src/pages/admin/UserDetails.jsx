@@ -11,63 +11,51 @@ const UserDetails = () => {
   if (!user) {
     return (
       <Card>
-        <p className="text-sm text-ink-500">User not found.</p>
+        <p className="small text-app-secondary mb-0">User not found.</p>
       </Card>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="User Details"
-        subtitle="Account profile and latest activities."
-      />
+    <div className="d-flex flex-column gap-4">
+      <PageHeader title="User Details" subtitle="Account profile and latest activities." />
 
-      <Card className="space-y-6">
-        <div className="flex items-center justify-between">
+      <Card>
+        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
           <div>
-            <p className="text-sm text-ink-500">User</p>
-            <p className="text-lg font-semibold text-ink-900 dark:text-on-brand">
-              {user.name}
-            </p>
-            <p className="text-sm text-ink-400">{user.email}</p>
+            <p className="small text-app-secondary mb-1">User</p>
+            <p className="h5 fw-semibold text-app-primary mb-1">{user.name}</p>
+            <p className="small text-app-muted mb-0">{user.email}</p>
           </div>
-          <Badge variant={user.status === 'active' ? 'success' : 'warning'}>
-            {user.status}
-          </Badge>
+          <Badge variant={user.status === 'active' ? 'success' : 'warning'}>{user.status}</Badge>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div>
-            <p className="text-xs text-ink-400">Role</p>
-            <p className="text-sm font-semibold text-ink-800 dark:text-on-brand">
-              {user.role}
-            </p>
+
+        <div className="row g-3">
+          <div className="col-sm-4">
+            <p className="small text-app-muted mb-1">Role</p>
+            <p className="mb-0 fw-semibold text-app-primary text-capitalize">{user.role}</p>
           </div>
-          <div>
-            <p className="text-xs text-ink-400">Plan</p>
-            <p className="text-sm font-semibold text-ink-800 dark:text-on-brand">
-              {user.plan}
-            </p>
+          <div className="col-sm-4">
+            <p className="small text-app-muted mb-1">Plan</p>
+            <p className="mb-0 fw-semibold text-app-primary">{user.plan}</p>
           </div>
-          <div>
-            <p className="text-xs text-ink-400">Last Active</p>
-            <p className="text-sm font-semibold text-ink-800 dark:text-on-brand">
-              {user.lastActive}
-            </p>
+          <div className="col-sm-4">
+            <p className="small text-app-muted mb-1">Last Active</p>
+            <p className="mb-0 fw-semibold text-app-primary">{user.lastActive}</p>
           </div>
         </div>
       </Card>
 
-      <Card className="space-y-4">
-        <p className="text-sm font-semibold text-ink-900 dark:text-on-brand">Recent Transactions</p>
-        <div className="space-y-3">
+      <Card>
+        <p className="fw-semibold text-app-primary mb-3">Recent Transactions</p>
+        <div className="d-flex flex-column gap-2">
           {recentTransactions.map((item) => (
-            <div key={item.id} className="flex items-center justify-between text-sm">
+            <div key={item.id} className="d-flex align-items-center justify-content-between rounded-3 bg-body-tertiary p-2">
               <div>
-                <p className="font-medium text-ink-800 dark:text-on-brand">{item.description}</p>
-                <p className="text-xs text-ink-400">{item.date}</p>
+                <p className="mb-0 fw-medium text-app-primary">{item.description}</p>
+                <p className="small mb-0 text-app-muted">{item.date}</p>
               </div>
-              <p className="font-semibold text-ink-700 dark:text-ink-200">
+              <p className="fw-semibold mb-0 text-app-secondary">
                 {item.type === 'credit' ? '+' : '-'}${item.amount.toLocaleString()}
               </p>
             </div>

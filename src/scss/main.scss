@@ -1,0 +1,286 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+@import "variables";
+@import "bootstrap/scss/bootstrap";
+
+:root {
+  --brand-primary: #a8df8e;
+  --brand-soft: #f0ffdf;
+  --brand-strong: #7abf6c;
+
+  --accent-primary: #ffd8df;
+  --accent-soft: #ffeff3;
+  --accent-strong: #ffaab8;
+
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  --sidebar-width: 17rem;
+  --sidebar-collapsed-width: 5rem;
+}
+
+body.dark {
+  --brand-primary: #84c772;
+  --brand-soft: #182636;
+  --brand-strong: #6eab62;
+
+  --accent-primary: #e89aaa;
+  --accent-soft: #291c28;
+  --accent-strong: #f29aa9;
+
+  --bg-primary: #0f172a;
+  --bg-secondary: #0b1220;
+  --bg-card: #1e293b;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  --border-subtle: #334155;
+  --border-strong: #475569;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.font-display { font-family: "Space Grotesk", sans-serif; }
+
+// ─── Text Utilities ───────────────────────
+.text-app-primary  { color: var(--text-primary) !important; }
+.text-app-secondary { color: var(--text-secondary) !important; }
+.text-app-muted     { color: var(--text-muted) !important; }
+
+// ─── Background Utilities ────────────────
+.bg-app-card        { background-color: var(--bg-card) !important; }
+.bg-app-secondary   { background-color: var(--bg-secondary) !important; }
+
+// ─── Border Utilities ────────────────────
+.border-app-subtle  { border-color: var(--border-subtle) !important; }
+
+// ─── Transition ──────────────────────────
+.transition-smooth  { transition: all 0.25s ease; }
+
+// ─── Font Size Extras ────────────────────
+.fs-7 { font-size: 0.75rem; }
+.fs-8 { font-size: 0.7rem; }
+
+.x-small { font-size: 0.72rem; }
+
+.letter-space-wide  { letter-spacing: 0.16em; }
+.letter-space-tight { letter-spacing: -0.02em; }
+
+// ─── Icon Button Sizes ───────────────────
+.btn-icon    { width: 2.5rem; height: 2.5rem; }
+.btn-icon-sm { width: 2rem; height: 2rem; }
+
+// ─── Profile Dropdown ────────────────────
+.profile-dropdown { min-width: 14rem; border-radius: 0 !important; }
+.profile-dropdown .profile-dropdown-item { border-radius: 0 !important; }
+
+// ─── Glass Card ──────────────────────────
+.glass-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  transition: all 0.3s;
+}
+body.dark .glass-card {
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+
+// ─── Input Field ─────────────────────────
+.input-field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+.input-field::placeholder { color: var(--text-muted); }
+.input-field:focus {
+  border-color: var(--brand-strong);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(168, 223, 142, 0.6);
+}
+body.dark .input-field { border-color: var(--border-strong); color: var(--text-primary); }
+body.dark .input-field:focus { box-shadow: 0 0 0 2px rgba(110, 171, 98, 0.4); }
+
+// ─── App Shell ───────────────────────────
+.app-shell { min-height: 100vh; background-color: var(--bg-primary); }
+
+// ─── Sidebar ─────────────────────────────
+.app-sidebar {
+  width: var(--sidebar-width);
+  max-width: calc(100vw - 2.5rem);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease, width 0.3s ease;
+
+  // Sidebar nav scroll
+  .sidebar-nav-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-subtle) transparent;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background-color: var(--border-subtle); border-radius: 2px; }
+  }
+}
+.app-sidebar.is-open { transform: translateX(0); }
+.app-sidebar.is-collapsed { width: var(--sidebar-collapsed-width); }
+
+// ─── Main Content ────────────────────────
+.main-content {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  transition: padding-left 0.3s ease;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+@media (min-width: 992px) {
+  .main-content.sidebar-expanded { padding-left: var(--sidebar-width); }
+  .main-content.sidebar-collapsed { padding-left: var(--sidebar-collapsed-width); }
+  .app-sidebar { max-width: none; transform: translateX(0); }
+}
+
+@media (max-width: 991.98px) {
+  .app-navbar .btn-icon { width: 2.25rem; height: 2.25rem; }
+  .app-navbar .fs-7 { font-size: 0.68rem; }
+}
+
+@media (max-width: 575.98px) {
+  .app-navbar { min-height: 3.75rem; }
+  .navbar-title-short { letter-spacing: 0.08em; }
+  .profile-trigger {
+    padding: 0.25rem;
+    border-color: transparent !important;
+    background: transparent !important;
+  }
+  .profile-trigger .btn-icon-sm { width: 1.8rem; height: 1.8rem; }
+  .profile-dropdown { min-width: 10.5rem; padding: 0.35rem !important; }
+  .profile-dropdown .profile-dropdown-item {
+    gap: 0.4rem !important;
+    padding: 0.4rem 0.55rem !important;
+    font-size: 0.82rem;
+  }
+  .profile-dropdown .dropdown-divider { margin: 0.3rem 0 !important; }
+}
+
+@media (max-width: 420px) {
+  .nav-notification { display: none !important; }
+  .app-navbar { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+}
+
+// ─── Auth Layout ─────────────────────────
+.auth-hero {
+  background:
+    radial-gradient(circle at 85% 10%, rgba(168, 223, 142, 0.3), transparent 40%),
+    radial-gradient(circle at 10% 95%, rgba(255, 216, 223, 0.35), transparent 40%),
+    linear-gradient(180deg, rgba(241, 245, 249, 0.8), rgba(248, 250, 252, 0.95));
+}
+.auth-shell { max-width: 30rem; }
+.auth-tab-nav {
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-secondary);
+}
+.auth-tab-btn {
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 0.65rem 1rem;
+  border-radius: 0.6rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+.auth-tab-btn.active {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+.auth-tip {
+  border: 1px dashed var(--border-subtle);
+  background-color: color-mix(in srgb, var(--bg-secondary) 65%, transparent);
+}
+
+// ─── Tables ──────────────────────────────
+.table > :not(caption) > * > * { vertical-align: middle; }
+
+// ─── Charts ──────────────────────────────
+.chart-wrapper    { height: 280px; }
+.chart-wrapper-lg { height: 360px; }
+
+@media (max-width: 575.98px) {
+  .chart-wrapper,
+  .chart-wrapper-lg { height: 220px; }
+  .card-body-mobile { padding: 1rem; }
+  .btn-mobile-block { width: 100%; }
+}
+
+// ─── Health Score ─────────────────────────
+.health-score-banner {
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--brand-soft) 60%, var(--bg-card)),
+    var(--bg-card)
+  );
+  border: 1px solid var(--border-subtle);
+}
+
+.health-score-circle {
+  position: relative;
+  flex-shrink: 0;
+}
+
+// ─── Stat Cards ───────────────────────────
+.stat-icon {
+  flex-shrink: 0;
+}
+
+// ─── Goal Progress ────────────────────────
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+// ─── Sidebar Nav Group Label ──────────────
+.sidebar-group-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.5rem 0.75rem 0.25rem;
+  font-weight: 600;
+}
+
+// ─── Mobile Bottom bar spacing ────────────
+@media (max-width: 767.98px) {
+  .main-content main {
+    padding-bottom: 5rem;
+  }
+}

@@ -33,15 +33,15 @@ const ResetPassword = () => {
       title="Set a new password"
       subtitle="Choose a strong password to secure your account."
       footer={
-        <p>
-          <Link className="font-semibold text-brand-600 hover:text-brand-700" to="/login">
+        <p className="mb-0">
+          <Link className="fw-semibold text-success text-decoration-none" to="/auth?tab=signin">
             Back to sign in
           </Link>
         </p>
       }
     >
-      <Card className="space-y-6">
-        <form className="space-y-5" onSubmit={handleSubmit}>
+      <Card>
+        <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
           <Input
             label="New password"
             name="password"
@@ -59,7 +59,7 @@ const ResetPassword = () => {
             onChange={handleChange}
             error={error}
           />
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-100 mt-2">
             Update password
           </Button>
         </form>

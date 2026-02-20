@@ -1,0 +1,18 @@
+// Custom Variable Overrides
+
+$primary: #a8df8e; // brand-primary
+$secondary: #475569; // text-secondary
+$success: #80c570; // state-success
+$info: #60a5fa; // state-info
+$warning: #e8b25e; // state-warning
+$danger: #e77a8c; // state-danger
+$light: #f8fafc; // bg-primary
+$dark: #0f172a; // text-primary
+
+$body-bg: $light;
+$body-color: $dark;
+
+$font-family-sans-serif: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+// Enable dark mode support in Bootstrap 5.3+
+$enable-dark-mode: true;

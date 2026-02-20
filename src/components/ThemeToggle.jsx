@@ -8,10 +8,10 @@ const ThemeToggle = () => {
     <button
       type="button"
       onClick={toggleTheme}
-      className="flex h-10 w-10 items-center justify-center rounded-xl border border-border-subtle text-text-secondary transition hover:border-accent-strong hover:text-text-primary dark:border-border-strong"
+      className="btn-icon d-inline-flex align-items-center justify-content-center rounded-3 border border-secondary-subtle text-secondary transition-smooth bg-transparent"
       aria-label="Toggle theme"
     >
-      {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
     </button>
   )
 }

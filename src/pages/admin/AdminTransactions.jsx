@@ -1,64 +1,125 @@
-import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowDownUp, Search } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 import Card from '../../components/Card'
 import Badge from '../../components/Badge'
-import { transactionsData } from '../../data/mockData'
+import Select from '../../components/Select'
+import { adminLedgerTransactions } from '../../data/mockData'
 
 const AdminTransactions = () => {
   const [search, setSearch] = useState('')
-  const filtered = transactionsData.filter((item) =>
-    item.description.toLowerCase().includes(search.toLowerCase())
-  )
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('date_desc')
+
+  const filtered = useMemo(() => {
+    const searched = adminLedgerTransactions.filter((item) => {
+      const query = search.toLowerCase()
+      const byText =
+        item.user.toLowerCase().includes(query) ||
+        item.category.toLowerCase().includes(query) ||
+        item.id.toLowerCase().includes(query)
+      const byType = typeFilter === 'all' ? true : item.type === typeFilter
+      const byStatus = statusFilter === 'all' ? true : item.status === statusFilter
+      return byText && byType && byStatus
+    })
+
+    return searched.sort((a, b) => {
+      if (sortBy === 'amount_desc') return b.amount - a.amount
+      if (sortBy === 'amount_asc') return a.amount - b.amount
+      if (sortBy === 'date_asc') return a.date.localeCompare(b.date)
+      return b.date.localeCompare(a.date)
+    })
+  }, [search, typeFilter, statusFilter, sortBy])
 
   return (
-    <div className="space-y-8">
+    <div className="d-flex flex-column gap-4">
       <PageHeader
-        title="All Transactions"
-        subtitle="Review every transaction across the platform."
+        title="Ledger Transaction Management"
+        subtitle="Track, review, and control all income and expense entries."
       />
 
-      <Card className="space-y-4">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-text-muted" />
-          <input
-            className="input-field pl-10"
-            placeholder="Search by description"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+      <Card>
+        <div className="row g-3 align-items-end mb-3">
+          <div className="col-12 col-md-6 col-xl-4">
+            <label className="form-label small text-app-secondary mb-1">Search</label>
+            <div className="position-relative">
+              <Search className="position-absolute top-50 start-0 ms-3 text-app-muted" size={16} style={{ transform: 'translateY(-50%)' }} />
+              <input
+                className="form-control rounded-3 ps-5"
+                placeholder="Search by ID, user, or category"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="col-6 col-md-3 col-xl-2">
+            <Select label="Type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+              <option value="all">All</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </Select>
+          </div>
+
+          <div className="col-6 col-md-3 col-xl-2">
+            <Select label="Status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <option value="all">All</option>
+              <option value="posted">Posted</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </Select>
+          </div>
+
+          <div className="col-12 col-md-6 col-xl-4">
+            <Select label="Sort" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+              <option value="date_desc">Latest Date</option>
+              <option value="date_asc">Oldest Date</option>
+              <option value="amount_desc">Highest Amount</option>
+              <option value="amount_asc">Lowest Amount</option>
+            </Select>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-text-muted">
+
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <ArrowDownUp size={16} className="text-app-muted" />
+          <p className="small text-app-secondary mb-0">{filtered.length} ledger records</p>
+        </div>
+
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0">
+            <thead>
               <tr>
-                <th className="pb-3">Transaction</th>
-                <th className="pb-3">Category</th>
-                <th className="pb-3">Type</th>
-                <th className="pb-3">Amount</th>
-                <th className="pb-3">Date</th>
+                <th className="small text-app-muted text-uppercase">Date</th>
+                <th className="small text-app-muted text-uppercase">User</th>
+                <th className="small text-app-muted text-uppercase">Category</th>
+                <th className="small text-app-muted text-uppercase">Amount</th>
+                <th className="small text-app-muted text-uppercase">Type</th>
+                <th className="small text-app-muted text-uppercase">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-subtle dark:divide-border-strong">
+            <tbody>
               {filtered.map((item) => (
-                <tr
-                  key={item.id}
-                  className="text-text-secondary transition hover:bg-bg-secondary/60 dark:text-text-secondary dark:hover:bg-bg-secondary/40"
-                >
-                  <td className="py-4">
-                    <p className="font-semibold text-text-primary">{item.description}</p>
-                    <p className="text-xs text-text-muted">{item.id}</p>
+                <tr key={item.id}>
+                  <td>
+                    <p className="mb-0 text-app-primary small">{item.date}</p>
+                    <p className="mb-0 text-app-muted small">{item.id}</p>
                   </td>
-                  <td className="py-4">{item.category}</td>
-                  <td className="py-4">
-                    <Badge variant={item.type === 'credit' ? 'success' : 'danger'}>
-                      {item.type}
+                  <td className="fw-medium text-app-primary">{item.user}</td>
+                  <td>{item.category}</td>
+                  <td className={item.type === 'income' ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>
+                    {item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString()}
+                  </td>
+                  <td>
+                    <Badge variant={item.type === 'income' ? 'success' : 'danger'}>
+                      {item.type === 'income' ? 'Income' : 'Expense'}
                     </Badge>
                   </td>
-                  <td className="py-4">
-                    {item.type === 'credit' ? '+' : '-'}${item.amount.toLocaleString()}
+                  <td>
+                    <Badge variant={item.status === 'posted' ? 'success' : item.status === 'pending' ? 'warning' : 'danger'}>
+                      {item.status}
+                    </Badge>
                   </td>
-                  <td className="py-4">{item.date}</td>
                 </tr>
               ))}
             </tbody>

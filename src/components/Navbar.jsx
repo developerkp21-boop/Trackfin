@@ -3,42 +3,41 @@ import ThemeToggle from './ThemeToggle'
 import ProfileMenu from './ProfileMenu'
 
 const Navbar = ({ onMenuClick, role = 'user' }) => (
-  <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border-subtle bg-bg-card px-4 py-4 transition dark:border-border-strong sm:px-6">
-    <div className="flex items-center gap-4">
+  <header className="app-navbar sticky-top z-2 d-flex align-items-center justify-content-between border-bottom border-secondary-subtle bg-app-card px-3 py-2 px-sm-4">
+    <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
       <button
         type="button"
-        className="flex h-10 w-10 items-center justify-center rounded-xl border border-border-subtle text-text-secondary transition hover:border-accent-strong hover:text-text-primary dark:border-border-strong lg:hidden"
+        className="btn-icon d-inline-flex d-lg-none align-items-center justify-content-center rounded-3 border border-secondary-subtle text-secondary bg-transparent"
         onClick={onMenuClick}
+        aria-label="Open sidebar"
       >
-        <Menu className="h-4 w-4" />
+        <Menu size={18} />
       </button>
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+      <div className="min-w-0">
+        <div className="d-flex align-items-center gap-2 flex-wrap">
+          <span className="navbar-title-long fw-semibold text-uppercase text-app-muted fs-7 letter-space-wide text-truncate d-none d-sm-inline">
             {role === 'admin' ? 'Admin Console' : 'Financial command center'}
           </span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              role === 'admin'
-                ? 'bg-accent-soft text-accent-strong'
-                : 'bg-brand-soft text-brand-700'
-            }`}
-          >
+          <span className="navbar-title-short fw-semibold text-uppercase text-app-muted fs-7 d-inline d-sm-none">
+            TrackFin
+          </span>
+          <span className={`badge rounded-pill px-2 py-1 fs-7 ${role === 'admin' ? 'text-bg-danger' : 'text-bg-success'}`}>
             {role === 'admin' ? 'Admin' : 'User'}
           </span>
         </div>
-        <p className="text-sm font-semibold text-text-primary">
+        <p className="mb-0 fw-semibold text-app-primary small text-truncate d-none d-sm-block">
           {role === 'admin' ? 'Administrative workspace' : 'Welcome back to TrackFin'}
         </p>
       </div>
     </div>
-    <div className="flex items-center gap-3">
+    <div className="d-flex align-items-center gap-1 gap-sm-2 flex-shrink-0">
       <button
         type="button"
-        className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-border-subtle text-text-secondary transition hover:border-accent-strong hover:text-text-primary dark:border-border-strong"
+        className="btn-icon nav-notification position-relative d-flex align-items-center justify-content-center rounded-3 border border-secondary-subtle text-secondary bg-transparent"
+        aria-label="Notifications"
       >
-        <Bell className="h-4 w-4" />
-        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-emerald-500" />
+        <Bell size={18} />
+        <span className="position-absolute top-0 end-0 mt-2 me-2 p-1 rounded-circle bg-success" />
       </button>
       <ThemeToggle />
       <ProfileMenu />

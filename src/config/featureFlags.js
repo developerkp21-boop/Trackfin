@@ -1,1 +1,1 @@
-export const ENABLE_AUTH_GUARD = false
+export const ENABLE_AUTH_GUARD = true

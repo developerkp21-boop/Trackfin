@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import './App.css'
+
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import AppRoutes from './routes/AppRoutes'

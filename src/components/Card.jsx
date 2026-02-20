@@ -1,5 +1,7 @@
-const Card = ({ className = '', children }) => (
-  <div className={`glass-card rounded-xl p-6 ${className}`}>{children}</div>
+const Card = ({ className = '', children, ...props }) => (
+  <div className={`glass-card rounded-4 p-4 ${className}`} {...props}>
+    {children}
+  </div>
 )
 
 export default Card
