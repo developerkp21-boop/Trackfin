@@ -4,6 +4,9 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 const UserRoute = ({ children }) => {
   const { user, loading, authGuardEnabled } = useAuth()
+  const hasAdminRole =
+    user?.role?.toLowerCase?.() === 'admin' ||
+    user?.roles?.some?.((role) => String(role).toLowerCase() === 'admin')
 
   if (!authGuardEnabled) {
     return children
@@ -13,7 +16,7 @@ const UserRoute = ({ children }) => {
     return <LoadingSpinner label="Checking access" />
   }
 
-  if (user?.role === 'admin') {
+  if (hasAdminRole) {
     return <Navigate to="/admin" replace />
   }
 

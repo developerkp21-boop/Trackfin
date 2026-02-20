@@ -1,12 +1,14 @@
 import BrandLogo from '../components/BrandLogo'
 
 const AuthLayout = ({ title, subtitle, children, footer }) => (
-  <div className="min-vh-100 d-flex flex-column bg-body">
-    <div className="row g-0 flex-grow-1">
-      <div className="d-none d-lg-flex col-lg-7 auth-hero p-5 align-items-stretch">
+  <div className="min-vh-100 d-flex flex-column bg-body auth-layout">
+    <div className="row g-0 flex-grow-1 auth-layout-row">
+      <div className="d-none d-lg-flex col-lg-7 auth-hero auth-hero-fixed p-5 align-items-stretch">
         <div className="d-flex flex-column justify-content-between w-100">
           <div className="d-flex align-items-center justify-content-between">
-            <BrandLogo size="lg" />
+            <div>
+              <BrandLogo size="lg" />
+            </div>
             <span className="badge rounded-pill bg-white text-secondary border border-secondary-subtle px-3 py-2">
               Secure Finance Ops
             </span>
@@ -51,11 +53,13 @@ const AuthLayout = ({ title, subtitle, children, footer }) => (
         </div>
       </div>
 
-      <div className="col-12 col-lg-5 d-flex align-items-center justify-content-center p-3 p-md-4 p-lg-5">
-        <div className="auth-shell w-100">
+      <div className="col-12 col-lg-5 d-flex align-items-center justify-content-center p-3 p-md-4 p-lg-5 auth-panel-scroll">
+        <div className="auth-shell w-100 auth-shell-content">
           <div className="mb-4 text-center text-lg-start">
             <div className="d-lg-none mb-3 d-inline-block">
-              <BrandLogo />
+              <div className="mt-3">
+                <BrandLogo />
+              </div>
             </div>
             <h2 className="h2 fw-bold text-app-primary mb-2">{title}</h2>
             {subtitle && <p className="text-app-secondary mb-0">{subtitle}</p>}

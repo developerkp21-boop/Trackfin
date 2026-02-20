@@ -230,6 +230,56 @@ body.dark .input-field:focus { box-shadow: 0 0 0 2px rgba(110, 171, 98, 0.4); }
   background-color: color-mix(in srgb, var(--bg-secondary) 65%, transparent);
 }
 
+@media (min-width: 992px) {
+  .auth-layout {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .auth-layout-row {
+    height: 100%;
+  }
+
+  .auth-hero-fixed {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .auth-panel-scroll {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-items: flex-start !important;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--border-strong);
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background-clip: padding-box;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: var(--brand-strong);
+    }
+  }
+
+  .auth-shell-content {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+}
+
 // ─── Tables ──────────────────────────────
 .table > :not(caption) > * > * { vertical-align: middle; }
 

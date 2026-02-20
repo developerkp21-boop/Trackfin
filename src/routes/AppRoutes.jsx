@@ -64,11 +64,11 @@ const AppRoutes = () => (
     <Route
       path="/admin"
       element={
-        //<ProtectedRoute>
+        <ProtectedRoute>
           <AdminRoute>
             <AdminLayout />
           </AdminRoute>
-        //</ProtectedRoute>
+        </ProtectedRoute>
       }
     >
       <Route index element={<AdminOverview />} />
