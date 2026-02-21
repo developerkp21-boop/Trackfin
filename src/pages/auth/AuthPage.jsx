@@ -5,6 +5,8 @@ import Input from '../../components/Input'
 import Button from '../../components/Button'
 import { useAuth } from '../../context/AuthContext'
 
+const DEMO_AUTH_ENABLED = import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true'
+
 const AuthPage = () => {
   const { login, register, loading } = useAuth()
   const location = useLocation()
@@ -185,9 +187,26 @@ const AuthPage = () => {
         </div>
       </div>
 
-      <div className="auth-tip rounded-3 p-3 small text-app-secondary text-center mt-3">
-        Use registered account credentials to sign in. Admin access depends on assigned role.
-      </div>
+      {DEMO_AUTH_ENABLED ? (
+        <div className="auth-tip rounded-3 p-3 small mt-3">
+          <p className="text-app-secondary text-center mb-2 fw-semibold">🚀 Demo Credentials</p>
+          <div className="d-flex flex-column gap-1">
+            <div className="d-flex align-items-center justify-content-between px-2 py-1 rounded-2" style={{ background: 'rgba(var(--brand-primary-rgb, 99,102,241),0.08)' }}>
+              <span className="text-app-secondary">Admin Dashboard</span>
+              <code className="small fw-semibold text-success">admin@demo.com</code>
+            </div>
+            <div className="d-flex align-items-center justify-content-between px-2 py-1 rounded-2" style={{ background: 'rgba(var(--brand-primary-rgb, 99,102,241),0.05)' }}>
+              <span className="text-app-secondary">User Dashboard</span>
+              <code className="small fw-semibold" style={{ color: 'var(--brand-primary)' }}>user@demo.com</code>
+            </div>
+          </div>
+          <p className="text-app-muted text-center mt-2 mb-0" style={{ fontSize: '0.72rem' }}>Any password works in demo mode</p>
+        </div>
+      ) : (
+        <div className="auth-tip rounded-3 p-3 small text-app-secondary text-center mt-3">
+          Use registered account credentials to sign in. Admin access depends on assigned role.
+        </div>
+      )}
     </AuthLayout>
   )
 }

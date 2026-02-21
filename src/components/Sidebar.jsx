@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import BrandLogo from './BrandLogo'
 import Button from './Button'
-import { adminNavItems, userNavItems } from '../routes/navigation'
+import { adminNavGroups, userNavItems } from '../routes/navigation'
 
 const userNavGroups = [
   {
@@ -29,9 +29,7 @@ const userNavGroups = [
 
 const Sidebar = ({ collapsed, onCollapse, mobileOpen, onClose, role = 'user' }) => {
   const isAdmin = role === 'admin'
-  const navGroups = isAdmin
-    ? [{ label: 'Admin', items: adminNavItems }]
-    : userNavGroups
+  const navGroups = isAdmin ? adminNavGroups : userNavGroups
 
   return (
     <>

@@ -457,3 +457,172 @@ export const adminChartData = [
   { month: 'Jan', revenue: 86000, users: 380 },
   { month: 'Feb', revenue: 74000, users: 360 }
 ]
+
+// ─────────────────────────────────────────────
+// ADMIN – PLATFORM KPI STATS (6 cards)
+// ─────────────────────────────────────────────
+export const adminPlatformStats = {
+  totalUsers: 1248,
+  activeUsers: 893,
+  totalTransactions: 18402,
+  systemBalance: 2841640,
+  totalGoals: 3124,
+  totalBudgets: 2876
+}
+
+// ─────────────────────────────────────────────
+// ADMIN – USER GROWTH (per month)
+// ─────────────────────────────────────────────
+export const adminUserGrowth = [
+  { month: 'Aug', users: 780 },
+  { month: 'Sep', users: 860 },
+  { month: 'Oct', users: 940 },
+  { month: 'Nov', users: 1020 },
+  { month: 'Dec', users: 1080 },
+  { month: 'Jan', users: 1160 },
+  { month: 'Feb', users: 1248 }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – TRANSACTION GROWTH (per month)
+// ─────────────────────────────────────────────
+export const adminTxGrowth = [
+  { month: 'Aug', transactions: 9200 },
+  { month: 'Sep', transactions: 11400 },
+  { month: 'Oct', transactions: 12800 },
+  { month: 'Nov', transactions: 14100 },
+  { month: 'Dec', transactions: 15500 },
+  { month: 'Jan', transactions: 17200 },
+  { month: 'Feb', transactions: 18402 }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – TOP EXPENSE CATEGORIES (aggregated)
+// ─────────────────────────────────────────────
+export const adminTopCategories = [
+  { category: 'Housing', amount: 342800, color: '#60a5fa' },
+  { category: 'Food & Dining', amount: 218400, color: '#80c570' },
+  { category: 'Transport', amount: 156200, color: '#e8b25e' },
+  { category: 'Healthcare', amount: 98600, color: '#a78bfa' },
+  { category: 'Entertainment', amount: 87400, color: '#e77a8c' },
+  { category: 'Utilities', amount: 74200, color: '#0ea5e9' },
+  { category: 'Education', amount: 61800, color: '#f97316' }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – SYSTEM ACTIVITY FEED
+// ─────────────────────────────────────────────
+export const adminActivityFeed = [
+  { id: 'FEED-1', user: 'Avery Maxwell', action: 'Updated system security policy', time: '2 min ago', level: 'warning' },
+  { id: 'FEED-2', user: 'Jordan Lee', action: 'Submitted 3 new expense entries', time: '18 min ago', level: 'success' },
+  { id: 'FEED-3', user: 'Elena Cruz', action: 'Created a new budget', time: '34 min ago', level: 'info' },
+  { id: 'FEED-4', user: 'Noah Kim', action: 'Reached Emergency Fund goal', time: '1 hr ago', level: 'success' },
+  { id: 'FEED-5', user: 'Priya Sharma', action: 'Failed login attempt (3x)', time: '2 hr ago', level: 'danger' },
+  { id: 'FEED-6', user: 'Marcus Chen', action: 'Password reset requested', time: '3 hr ago', level: 'warning' },
+  { id: 'FEED-7', user: 'Sofia Ruiz', action: 'Exported transaction report', time: '4 hr ago', level: 'info' },
+  { id: 'FEED-8', user: 'Liam Nguyen', action: 'Account deactivated by admin', time: '5 hr ago', level: 'danger' }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – FINANCIAL INSIGHTS
+// ─────────────────────────────────────────────
+export const adminInsights = {
+  avgSavingsRate: 28.4,
+  avgDebtRatio: 19.2,
+  mostUsedAccountType: 'Bank',
+  mostCommonCategory: 'Food & Dining',
+  accountTypeDistribution: [
+    { name: 'Bank', value: 42, color: '#60a5fa' },
+    { name: 'Savings', value: 28, color: '#80c570' },
+    { name: 'Credit Card', value: 18, color: '#e77a8c' },
+    { name: 'Cash', value: 12, color: '#e8b25e' }
+  ],
+  savingsRateBySegment: [
+    { segment: '18–25', rate: 12.4 },
+    { segment: '26–35', rate: 24.8 },
+    { segment: '36–45', rate: 32.1 },
+    { segment: '46–55', rate: 28.7 },
+    { segment: '55+', rate: 22.3 }
+  ]
+}
+
+export const adminHighRiskUsers = [
+  { id: 'USR-2014', name: 'Liam Nguyen', email: 'liam@trackfin.com', healthScore: 28, debtRatio: 71, status: 'active', risk: 'critical' },
+  { id: 'USR-2031', name: 'Priya Sharma', email: 'priya@trackfin.com', healthScore: 34, debtRatio: 63, status: 'deactivated', risk: 'high' },
+  { id: 'USR-2055', name: 'Marcus Chen', email: 'marcus@trackfin.com', healthScore: 41, debtRatio: 58, status: 'active', risk: 'high' },
+  { id: 'USR-2068', name: 'Sofia Ruiz', email: 'sofia@trackfin.com', healthScore: 48, debtRatio: 49, status: 'active', risk: 'medium' },
+  { id: 'USR-2074', name: 'Carter Bloom', email: 'carter@trackfin.com', healthScore: 52, debtRatio: 44, status: 'active', risk: 'medium' }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – SECURITY MONITORING
+// ─────────────────────────────────────────────
+export const adminLoginAttempts = [
+  { id: 'LOG-1', user: 'priya@trackfin.com', ip: '192.168.1.44', attempts: 5, lastAttempt: '2026-02-21 11:42:18', status: 'blocked' },
+  { id: 'LOG-2', user: 'unknown@evil.com', ip: '45.33.32.156', attempts: 12, lastAttempt: '2026-02-21 10:15:09', status: 'blocked' },
+  { id: 'LOG-3', user: 'carter@trackfin.com', ip: '192.168.1.108', attempts: 3, lastAttempt: '2026-02-21 09:08:44', status: 'warned' },
+  { id: 'LOG-4', user: 'test@trackfin.com', ip: '10.0.0.22', attempts: 2, lastAttempt: '2026-02-20 22:31:10', status: 'warned' },
+  { id: 'LOG-5', user: 'admin@trackfin.com', ip: '203.0.113.50', attempts: 7, lastAttempt: '2026-02-20 18:55:02', status: 'blocked' }
+]
+
+export const adminSuspiciousActivity = [
+  { id: 'SUS-1', user: 'Liam Nguyen', action: 'Bulk export of all transactions', severity: 'high', timestamp: '2026-02-21 11:02:34', ip: '45.33.32.156' },
+  { id: 'SUS-2', user: 'Priya Sharma', action: 'Login from new country (RU)', severity: 'high', timestamp: '2026-02-21 09:48:21', ip: '91.108.4.207' },
+  { id: 'SUS-3', user: 'Marcus Chen', action: 'Edited 14 transactions in 2 minutes', severity: 'medium', timestamp: '2026-02-20 17:22:09', ip: '192.168.0.56' },
+  { id: 'SUS-4', user: 'Carter Bloom', action: 'Multiple failed OTP attempts', severity: 'medium', timestamp: '2026-02-20 14:10:55', ip: '10.0.0.77' },
+  { id: 'SUS-5', user: 'Sofia Ruiz', action: 'API key regenerated 3x today', severity: 'low', timestamp: '2026-02-20 11:34:18', ip: '172.16.0.12' }
+]
+
+export const adminDeviceSessions = [
+  { id: 'SES-1', user: 'Avery Maxwell', device: 'Chrome / macOS', ip: '192.168.1.2', location: 'Mumbai, IN', lastSeen: '2 min ago', current: true },
+  { id: 'SES-2', user: 'Jordan Lee', device: 'Safari / iOS', ip: '10.0.1.44', location: 'Bangalore, IN', lastSeen: '22 min ago', current: false },
+  { id: 'SES-3', user: 'Noah Kim', device: 'Firefox / Windows', ip: '192.168.0.98', location: 'Delhi, IN', lastSeen: '1 hr ago', current: false },
+  { id: 'SES-4', user: 'Liam Nguyen', device: 'Chrome / Android', ip: '45.33.32.156', location: 'Moscow, RU', lastSeen: '2 hr ago', current: false },
+  { id: 'SES-5', user: 'Elena Cruz', device: 'Edge / Windows', ip: '172.16.0.20', location: 'Pune, IN', lastSeen: '3 hr ago', current: false },
+  { id: 'SES-6', user: 'Marcus Chen', device: 'Chrome / Linux', ip: '192.168.0.56', location: 'Chennai, IN', lastSeen: '5 hr ago', current: false }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – SYSTEM SETTINGS
+// ─────────────────────────────────────────────
+export const adminSystemFeatures = [
+  { id: 'FEAT-1', key: 'smart_insights', label: 'Smart Insights', description: 'AI-powered spending recommendations for users.', enabled: true },
+  { id: 'FEAT-2', key: 'budget_alerts', label: 'Budget Alerts', description: 'Push and email alerts when users exceed budgets.', enabled: true },
+  { id: 'FEAT-3', key: 'net_worth_tracker', label: 'Net Worth Tracker', description: 'Asset and liability tracking module.', enabled: true },
+  { id: 'FEAT-4', key: 'health_score', label: 'Financial Health Score', description: 'Composite score based on savings, debt, goals.', enabled: false },
+  { id: 'FEAT-5', key: 'export_reports', label: 'Export Reports', description: 'Allow users to export CSV/PDF reports.', enabled: true },
+  { id: 'FEAT-6', key: 'two_factor_auth', label: 'Two-Factor Authentication', description: 'Optional 2FA via email or authenticator app.', enabled: false }
+]
+
+export const adminAnnouncementsList = [
+  { id: 'ANN-1', title: 'Scheduled Maintenance – Feb 25', message: 'The platform will be in maintenance mode from 02:00–04:00 UTC on Feb 25.', type: 'warning', createdAt: '2026-02-18', active: true },
+  { id: 'ANN-2', title: 'New Feature: Health Score v2', message: 'We have upgraded the Financial Health Score engine with better precision.', type: 'info', createdAt: '2026-02-10', active: true },
+  { id: 'ANN-3', title: 'Tax Season Resources Available', message: 'Tax preparation guides and export templates are now available in Reports.', type: 'success', createdAt: '2026-02-01', active: false }
+]
+
+// ─────────────────────────────────────────────
+// ADMIN – REPORTS
+// ─────────────────────────────────────────────
+export const adminReportStats = [
+  { label: 'Total Revenue', value: '$2,841,640', change: '+14.9%', positive: true },
+  { label: 'Total Users', value: '1,248', change: '+12.4%', positive: true },
+  { label: 'Active User Rate', value: '71.6%', change: '+2.1%', positive: true },
+  { label: 'Transaction Count', value: '18,402', change: '+8.2%', positive: true }
+]
+
+export const adminRevenueTrend = [
+  { month: 'Aug', revenue: 187000 },
+  { month: 'Sep', revenue: 214000 },
+  { month: 'Oct', revenue: 228000 },
+  { month: 'Nov', revenue: 251000 },
+  { month: 'Dec', revenue: 272000 },
+  { month: 'Jan', revenue: 298000 },
+  { month: 'Feb', revenue: 274000 }
+]
+
+export const adminExportHistory = [
+  { id: 'EXP-1', type: 'Users CSV', requestedBy: 'Avery Maxwell', size: '24 KB', createdAt: '2026-02-20 14:32', status: 'completed' },
+  { id: 'EXP-2', type: 'Transactions CSV', requestedBy: 'Avery Maxwell', size: '148 KB', createdAt: '2026-02-18 09:15', status: 'completed' },
+  { id: 'EXP-3', type: 'Analytics Summary', requestedBy: 'Avery Maxwell', size: '8 KB', createdAt: '2026-02-15 16:45', status: 'completed' },
+  { id: 'EXP-4', type: 'Transactions CSV', requestedBy: 'Jordan Lee', size: '76 KB', createdAt: '2026-02-12 11:20', status: 'completed' }
+]

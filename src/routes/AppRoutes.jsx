@@ -25,6 +25,9 @@ import ManageUsers from '../pages/admin/ManageUsers'
 import UserDetails from '../pages/admin/UserDetails'
 import AdminTransactions from '../pages/admin/AdminTransactions'
 import SystemSettings from '../pages/admin/SystemSettings'
+import FinancialInsights from '../pages/admin/FinancialInsights'
+import SecurityMonitoring from '../pages/admin/SecurityMonitoring'
+import AdminReports from '../pages/admin/AdminReports'
 import NotFound from '../pages/NotFound'
 
 const AppRoutes = () => (
@@ -75,7 +78,10 @@ const AppRoutes = () => (
       <Route path="users" element={<ManageUsers />} />
       <Route path="users/:id" element={<UserDetails />} />
       <Route path="transactions" element={<AdminTransactions />} />
+      <Route path="insights" element={<FinancialInsights />} />
+      <Route path="security" element={<SecurityMonitoring />} />
       <Route path="settings" element={<SystemSettings />} />
+      <Route path="reports" element={<AdminReports />} />
     </Route>
 
     <Route path="*" element={<NotFound />} />

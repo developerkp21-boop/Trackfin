@@ -194,7 +194,7 @@ const AuthProvider = ({ children }) => {
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
       );
     } catch (error) {
-      if (import.meta.env.DEV && ENABLE_DEMO_AUTH) {
+      if (ENABLE_DEMO_AUTH) {
         const role = email?.includes("admin") ? "admin" : "user";
         saveSession("demo-token", {
           name: email?.split("@")[0] || "Demo User",
@@ -229,7 +229,7 @@ const AuthProvider = ({ children }) => {
       toast.success("Account created successfully.");
       navigate(normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard");
     } catch (error) {
-      if (import.meta.env.DEV && ENABLE_DEMO_AUTH) {
+      if (ENABLE_DEMO_AUTH) {
         saveSession("demo-token", {
           name: payload.name || "New User",
           email: payload.email,
