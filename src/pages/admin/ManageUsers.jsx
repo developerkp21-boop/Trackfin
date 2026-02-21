@@ -77,6 +77,173 @@ const ManageUsers = () => {
   return (
     <>
       <div className="d-flex flex-column gap-4">
+        <style>
+          {`
+            /* Desktop remains unchanged (≥ 1024px) */
+            @media (min-width: 1024px) {
+              .manage-user-card-label { display: none; }
+              .user-details-stacked { display: none !important; }
+            }
+
+            /* Mobile View (≤ 768px) */
+            @media (max-width: 768px) {
+              .table-responsive {
+                overflow: visible !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+              }
+              .table {
+                background: transparent !important;
+                border: none !important;
+                border-collapse: separate !important;
+                border-spacing: 0 0.5rem !important;
+              }
+              .table thead {
+                display: none !important;
+              }
+              .table tbody tr {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 0.5rem !important;
+                padding: 0.5rem 0.625rem !important;
+                margin-bottom: 0.5rem !important;
+                box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+                gap: 0.375rem !important;
+                width: 100% !important;
+                position: relative;
+              }
+              .table tbody td {
+                display: block !important;
+                border: none !important;
+                padding: 0 !important;
+                background: transparent !important;
+              }
+
+              /* Section 1: Info (Name, Email, Role) */
+              .col-user-info {
+                flex: 1 1 50% !important; 
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+                min-width: 140px !important;
+              }
+              .mobile-name {
+                font-size: 0.9rem !important;
+                font-weight: 700 !important;
+                color: #111827 !important;
+                margin: 0 !important;
+                line-height: 1.2 !important;
+                word-break: break-word;
+              }
+              .mobile-email {
+                font-size: 0.675rem !important;
+                color: #6b7280 !important;
+                margin: 0 !important;
+                line-height: 1.2 !important;
+                word-break: break-all;
+              }
+              .mobile-role-text {
+                font-size: 0.675rem !important;
+                color: #6b7280 !important;
+                line-height: 1.2 !important;
+              }
+              .mobile-role-text b {
+                font-weight: 600 !important;
+                color: #374151 !important;
+              }
+
+              /* Section 2: Badge (Absolute or Flex) */
+              .col-user-badge {
+                flex: 0 0 auto !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+                padding-top: 0.125rem !important;
+              }
+
+              /* Section 3: Status/Plan/Actions */
+              .col-user-status {
+                flex: 1 0 auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-end !important;
+                gap: 0.125rem !important;
+                text-align: right !important;
+                min-width: 120px !important;
+              }
+              .mobile-plan-name {
+                font-size: 0.7rem !important;
+                font-weight: 600 !important;
+                color: #4b5563 !important;
+                line-height: 1.2 !important;
+              }
+              .mobile-date-text {
+                font-size: 0.625rem !important;
+                color: #9ca3af !important;
+                margin: 0 !important;
+                line-height: 1.2 !important;
+              }
+              .manage-user-actions-mobile {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                justify-content: flex-end !important;
+                gap: 0.125rem !important;
+              }
+              .btn-icon-outline {
+                width: 26px !important;
+                height: 26px !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: 1px solid #e5e7eb !important;
+                border-radius: 0.375rem !important;
+                background: #ffffff !important;
+                color: #6b7280 !important;
+              }
+              .btn-icon-outline svg {
+                width: 13px !important;
+                height: 13px !important;
+              }
+
+              /* Extra Scaling: On very small screens, make it a true stack if needed */
+              @media (max-width: 340px) {
+                .col-user-info { flex: 1 1 100% !important; order: 1; }
+                .col-user-badge { position: absolute; top: 0.5rem; right: 0.625rem; order: 2; }
+                .col-user-status { flex: 1 1 100% !important; align-items: flex-start !important; text-align: left !important; order: 3; margin-top: 0.25rem; border-top: 1px dashed #f3f4f6; padding-top: 0.25rem; }
+                .manage-user-actions-mobile { justify-content: flex-start !important; }
+              }
+              .btn-icon-outline:hover {
+                border-color: #cbd5e1 !important;
+                background: #f8fafc !important;
+              }
+              .btn-icon-outline.btn-delete {
+                border-color: #ffd8df !important;
+                color: #ef4444 !important;
+              }
+              .btn-icon-outline.btn-delete:hover {
+                background: #fff1f2 !important;
+              }
+
+              /* Hide standard columns in mobile card */
+              .table tbody td[data-label="Name"],
+              .table tbody td[data-label="Email"],
+              .table tbody td[data-label="Role"],
+              .table tbody td[data-label="Plan"],
+              .table tbody td[data-label="Status"],
+              .table tbody td[data-label="Joined"],
+              .table tbody td[data-label="Last Active"],
+              .table tbody td.user-details-stacked,
+              .table tbody td:last-child:not(.col-user-status) {
+                display: none !important;
+              }
+            }
+          `}
+        </style>
         <PageHeader
           title="User Management"
           subtitle="Manage account access, roles, plans, and lifecycle controls."
@@ -85,14 +252,13 @@ const ManageUsers = () => {
 
         <Card>
           {/* ─── Filters ─── */}
-          <div className="row g-3 align-items-end mb-3">
-            {/* Search */}
-            <div className="col-12 col-md-6 col-xl-4">
+          <div className="row g-2 align-items-end mb-3">
+            <div className="col-12">
               <label className="form-label small text-app-secondary mb-1">Search</label>
               <div className="position-relative">
                 <Search className="position-absolute top-50 start-0 ms-3 text-app-muted" size={16} style={{ transform: 'translateY(-50%)' }} />
                 <input
-                  className="form-control rounded-3 ps-5"
+                  className="form-control rounded-3 ps-5 bg-light border-0"
                   placeholder="Search by name or email"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -100,66 +266,38 @@ const ManageUsers = () => {
               </div>
             </div>
 
-            {/* Role */}
-            <div className="col-6 col-md-3 col-xl-2">
-              <Select label="Role" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <div className="col-6">
+              <label className="form-label small text-app-secondary mb-1">Role</label>
+              <select className="form-select rounded-3 border-light bg-light text-app-secondary small" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
                 <option value="all">All Roles</option>
                 <option value="admin">Admin</option>
                 <option value="user">User</option>
-              </Select>
+              </select>
             </div>
 
-            {/* Status */}
-            <div className="col-6 col-md-3 col-xl-2">
-              <Select label="Status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <div className="col-6">
+              <label className="form-label small text-app-secondary mb-1">&nbsp;</label>
+              <select className="form-select rounded-3 border-light bg-light text-app-secondary small" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
                 <option value="deactivated">Deactivated</option>
-              </Select>
+              </select>
             </div>
 
-            {/* Plan */}
-            <div className="col-6 col-md-3 col-xl-2">
-              <Select label="Plan" value={planFilter} onChange={(e) => setPlanFilter(e.target.value)}>
-                <option value="all">All Plans</option>
-                {uniquePlans.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </Select>
-            </div>
-
-            {/* Date From */}
-            <div className="col-6 col-md-3 col-xl-2">
-              <label className="form-label small text-app-secondary mb-1">Joined From</label>
-              <input
-                type="date"
-                className="form-control rounded-3"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-              />
-            </div>
-
-            {/* Date To */}
-            <div className="col-6 col-md-3 col-xl-2">
-              <label className="form-label small text-app-secondary mb-1">Joined To</label>
-              <input
-                type="date"
-                className="form-control rounded-3"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-              />
-            </div>
-
-            {/* Summary + Clear */}
-            <div className="col-12 col-xl d-flex align-items-center gap-3 justify-content-xl-end">
-              <p className="small text-app-secondary mb-0">
-                <span className="fw-semibold text-app-primary">{filteredUsers.length}</span> users found
+            <div className="col-12 d-flex justify-content-between align-items-center mt-2">
+              <div className="flex-grow-1">
+                <label className="form-label small text-app-secondary mb-1">Joined From</label>
+                <input
+                  type="date"
+                  className="form-control rounded-3 border-light bg-light text-center small py-1"
+                  style={{maxWidth: '160px'}}
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                />
+              </div>
+              <p className="small text-app-muted mb-0 pt-3">
+                {filteredUsers.length} users found
               </p>
-              {hasActiveFilters && (
-                <button type="button" className="btn btn-sm btn-outline-secondary" onClick={clearFilters}>
-                  Clear Filters
-                </button>
-              )}
             </div>
           </div>
 
@@ -188,54 +326,66 @@ const ManageUsers = () => {
                 ) : (
                   filteredUsers.map((user) => (
                     <tr key={user.id}>
-                      <td className="fw-semibold text-app-primary">{user.name}</td>
-                      <td className="text-app-secondary small">{user.email}</td>
-                      <td>
+                      {/* Standard Columns (Desktop) */}
+                      <td data-label="Name" className="fw-semibold text-app-primary">{user.name}</td>
+                      <td data-label="Email" className="text-app-secondary small">{user.email}</td>
+                      <td data-label="Role">
                         <Badge variant={user.role === 'admin' ? 'danger' : 'info'}>{user.role}</Badge>
                       </td>
-                      <td className="small text-app-secondary">{user.plan}</td>
-                      <td>
+                      <td data-label="Plan" className="small text-app-secondary">{user.plan}</td>
+                      <td data-label="Status">
                         <Badge variant={user.status === 'active' ? 'success' : 'warning'}>{user.status}</Badge>
                       </td>
-                      <td className="small text-app-secondary">{user.joinedDate}</td>
-                      <td className="small text-app-secondary">{user.lastActive}</td>
-                      <td>
-                        <div className="d-flex justify-content-end gap-2 flex-wrap">
-                          <Link
-                            to={`/admin/users/${user.id}`}
-                            className="btn btn-outline-secondary btn-sm"
-                            aria-label="View user"
-                            title="View Profile"
-                          >
-                            <Eye size={15} />
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={() => toggleStatus(user.id)}
-                            className="btn btn-outline-secondary btn-sm"
-                            aria-label={user.status === 'active' ? 'Suspend user' : 'Activate user'}
-                            title={user.status === 'active' ? 'Suspend' : 'Activate'}
-                          >
+                      <td data-label="Joined" className="small text-app-secondary">{user.joinedDate}</td>
+                      <td data-label="Last Active" className="small text-app-secondary">{user.lastActive}</td>
+                      
+                      {/* Mobile Column Structure (3 Cols) */}
+                      <td className="col-user-info">
+                        <h6 className="mobile-name">{user.name}</h6>
+                        <div className="mobile-email text-lowercase">{user.email}</div>
+                        <div className="mobile-role-text"><b>Role:</b> {user.role}</div>
+                      </td>
+
+                      <td className="col-user-badge">
+                        <Badge variant={user.role === 'admin' ? 'danger' : 'info'}>{user.role}</Badge>
+                      </td>
+
+                      <td className="col-user-status">
+                        <div className="mobile-plan-name">{user.plan}</div>
+                        
+                        {user.status === 'active' ? (
+                          <div className="manage-user-actions-mobile">
+                            <Link to={`/admin/users/${user.id}`} className="btn-icon-outline" title="View Profile">
+                              <Eye size={14} />
+                            </Link>
+                            <button onClick={() => setResetPwTarget(user)} className="btn-icon-outline" title="Reset Password">
+                              <KeyRound size={14} />
+                            </button>
+                            <button onClick={() => toggleStatus(user.id)} className="btn-icon-outline" title="Suspend">
+                              <UserMinus size={14} />
+                            </button>
+                            <button onClick={() => setDeleteTarget(user)} className="btn-icon-outline btn-delete" title="Delete">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="my-1">
+                            <Badge variant="warning" className="px-3">{user.status}</Badge>
+                          </div>
+                        )}
+
+                        <div className="mobile-date-text">{user.joinedDate}</div>
+                      </td>
+
+                      {/* Desktop Actions */}
+                      <td className="text-end d-none d-lg-table-cell">
+                        <div className="d-flex justify-content-end gap-2">
+                          <Link to={`/admin/users/${user.id}`} className="btn btn-outline-secondary btn-sm"><Eye size={15} /></Link>
+                          <button onClick={() => setResetPwTarget(user)} className="btn btn-outline-secondary btn-sm"><KeyRound size={15} /></button>
+                          <button onClick={() => toggleStatus(user.id)} className="btn btn-outline-secondary btn-sm">
                             {user.status === 'active' ? <UserMinus size={15} /> : <UserPlus size={15} />}
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => setResetPwTarget(user)}
-                            className="btn btn-outline-secondary btn-sm"
-                            aria-label="Reset password"
-                            title="Reset Password"
-                          >
-                            <KeyRound size={15} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteTarget(user)}
-                            className="btn btn-outline-danger btn-sm"
-                            aria-label="Delete user"
-                            title="Delete"
-                          >
-                            <Trash2 size={15} />
-                          </button>
+                          <button onClick={() => setDeleteTarget(user)} className="btn btn-outline-danger btn-sm"><Trash2 size={15} /></button>
                         </div>
                       </td>
                     </tr>
@@ -246,6 +396,7 @@ const ManageUsers = () => {
           </div>
         </Card>
       </div>
+
 
       {/* ─── Delete Confirmation Modal ─── */}
       {deleteTarget && (

@@ -101,8 +101,14 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    loadStoredSession();
-    setLoading(false);
+    try {
+      loadStoredSession();
+    } catch (error) {
+      console.error("Failed to load stored session:", error);
+      clearSession();
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const saveSession = (newToken, newUser) => {
