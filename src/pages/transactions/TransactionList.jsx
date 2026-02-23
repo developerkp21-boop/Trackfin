@@ -7,6 +7,7 @@ import Select from '../../components/Select'
 import Button from '../../components/Button'
 import Badge from '../../components/Badge'
 import { transactionsData } from '../../data/mockData'
+import './TransactionList.css'
 
 const initialForm = {
   date: '',
@@ -122,7 +123,7 @@ const TransactionList = () => {
 
   return (
     <>
-      <div className="d-flex flex-column gap-4">
+      <div className="d-flex flex-column gap-4 transaction-list-wrapper">
         <PageHeader
           title="Transaction Management"
           subtitle="Ledger-style transaction capture, filtering, sorting, and controls."
@@ -150,13 +151,13 @@ const TransactionList = () => {
 
           <form className="row g-3" onSubmit={handleSubmit}>
             <div className="col-md-3">
-              <Input label="Date" name="date" type="date" value={formValues.date} onChange={handleFormChange} />
+              <Input label="Date" name="date" type="date" value={formValues.date} onChange={handleFormChange} wrapperClassName="mb-0" />
             </div>
             <div className="col-md-3">
-              <Input label="Amount" name="amount" type="number" value={formValues.amount} onChange={handleFormChange} />
+              <Input label="Amount" name="amount" type="number" value={formValues.amount} onChange={handleFormChange} wrapperClassName="mb-0" />
             </div>
             <div className="col-md-3">
-              <Select label="Category" name="category" value={formValues.category} onChange={handleFormChange}>
+              <Select label="Category" name="category" value={formValues.category} onChange={handleFormChange} wrapperClassName="mb-0" isSearchable>
                 {['Sales', 'Operations', 'Payroll', 'Marketing', 'Compliance', 'Facilities', 'Services'].map((item) => (
                   <option key={item} value={item}>
                     {item}
@@ -165,7 +166,7 @@ const TransactionList = () => {
               </Select>
             </div>
             <div className="col-md-3">
-              <Select label="Payment Method" name="paymentMethod" value={formValues.paymentMethod} onChange={handleFormChange}>
+              <Select label="Payment Method" name="paymentMethod" value={formValues.paymentMethod} onChange={handleFormChange} wrapperClassName="mb-0" isSearchable>
                 {['Cash', 'Bank', 'Card', 'UPI'].map((item) => (
                   <option key={item} value={item}>
                     {item}
@@ -174,10 +175,10 @@ const TransactionList = () => {
               </Select>
             </div>
             <div className="col-md-4">
-              <Input label="Account" name="account" value={formValues.account} onChange={handleFormChange} />
+              <Input label="Account" name="account" value={formValues.account} onChange={handleFormChange} wrapperClassName="mb-0" />
             </div>
             <div className="col-md-8">
-              <Input label="Description" name="description" value={formValues.description} onChange={handleFormChange} />
+              <Input label="Description" name="description" value={formValues.description} onChange={handleFormChange} wrapperClassName="mb-0" />
             </div>
             <div className="col-12 d-flex flex-column flex-sm-row justify-content-sm-end gap-2">
               {editingId && (
@@ -195,7 +196,7 @@ const TransactionList = () => {
         <Card>
           <div className="row g-3 align-items-end mb-3">
             <div className="col-12 col-md-4">
-              <label className="form-label small text-app-secondary mb-1">Search</label>
+              <label className="form-label fw-medium text-secondary small">Search</label>
               <div className="position-relative">
                 <Search className="position-absolute top-50 start-0 ms-3 text-muted" size={16} style={{ transform: 'translateY(-50%)' }} />
                 <input
@@ -207,14 +208,14 @@ const TransactionList = () => {
               </div>
             </div>
             <div className="col-6 col-md-2">
-              <Select label="Type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+              <Select label="Type" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} wrapperClassName="mb-0" isSearchable>
                 <option value="all">All</option>
                 <option value="credit">Income</option>
                 <option value="debit">Expense</option>
               </Select>
             </div>
             <div className="col-6 col-md-3">
-              <Select label="Account" value={accountFilter} onChange={(event) => setAccountFilter(event.target.value)}>
+              <Select label="Account" value={accountFilter} onChange={(event) => setAccountFilter(event.target.value)} wrapperClassName="mb-0" isSearchable>
                 <option value="all">All Accounts</option>
                 {accounts.map((account) => (
                   <option key={account} value={account}>
@@ -224,7 +225,7 @@ const TransactionList = () => {
               </Select>
             </div>
             <div className="col-12 col-md-3">
-              <Select label="Sort" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+              <Select label="Sort" value={sortBy} onChange={(event) => setSortBy(event.target.value)} wrapperClassName="mb-0" isSearchable>
                 <option value="date_desc">Latest Date</option>
                 <option value="date_asc">Oldest Date</option>
                 <option value="amount_desc">Highest Amount</option>
@@ -234,8 +235,8 @@ const TransactionList = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
-              <thead>
+            <table className="table table-hover align-middle mb-0 transaction-table">
+              <thead className="bg-light d-none d-lg-table-header-group">
                 <tr>
                   <th className="small text-app-muted text-uppercase">Date</th>
                   <th className="small text-app-muted text-uppercase">Category</th>
@@ -246,34 +247,76 @@ const TransactionList = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((item) => (
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-5 text-app-secondary small">
+                      No transactions match your filters.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((item) => (
                   <tr key={item.id}>
-                    <td>
+                    <td className="d-none d-lg-table-cell">
                       <p className="mb-0">{item.date}</p>
                       <p className="small text-app-muted mb-0">{item.id}</p>
                     </td>
-                    <td>{item.category}</td>
-                    <td className={item.type === 'credit' ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>
+                    <td className="d-none d-lg-table-cell">{item.category}</td>
+                    <td className={`d-none d-lg-table-cell ${item.type === 'credit' ? 'text-success fw-semibold' : 'text-danger fw-semibold'}`}>
                       {item.type === 'credit' ? '+' : '-'}${item.amount.toLocaleString()}
                     </td>
-                    <td>
+                    <td className="d-none d-lg-table-cell">
                       <Badge variant={item.type === 'credit' ? 'success' : 'danger'}>
                         {item.type === 'credit' ? 'Income' : 'Expense'}
                       </Badge>
                     </td>
-                    <td>{item.account}</td>
-                    <td>
-                      <div className="d-flex gap-2">
-                        <Button variant="ghost" className="p-2 text-muted" onClick={() => handleEdit(item)}>
+                    <td className="d-none d-lg-table-cell">{item.account}</td>
+
+                    <td className="text-end d-none d-lg-table-cell">
+                      <div className="d-flex justify-content-end gap-1">
+                        <button type="button" className="btn btn-light btn-sm rounded-2 text-app-secondary" onClick={() => handleEdit(item)} title="Edit Transaction">
                           <Pencil size={16} />
-                        </Button>
-                        <Button variant="ghost" className="p-2 text-danger" onClick={() => setDeleteTarget(item)}>
+                        </button>
+                        <button type="button" className="btn btn-light-danger btn-sm rounded-2 text-danger" onClick={() => setDeleteTarget(item)} title="Delete Transaction">
                           <Trash2 size={16} />
-                        </Button>
+                        </button>
+                      </div>
+                    </td>
+
+                    <td className="w-100 d-lg-none p-0 border-0 mobile-card-container">
+                      <div className="mobile-card-grid">
+                        <div className="mobile-card-left">
+                          <h6 className="mobile-name mb-1">{item.category}</h6>
+                          <div className="mobile-date-text">{item.date}</div>
+                          <div className="mobile-id-text">{item.id}</div>
+                          <div className="mobile-account-text mt-2">
+                            <b>Account:</b> {item.account}
+                          </div>
+                        </div>
+
+                        <div className="mobile-card-right">
+                          <div className={`mobile-amount ${item.type === 'credit' ? 'text-success' : 'text-danger'}`}>
+                            {item.type === 'credit' ? '+' : '-'}${item.amount.toLocaleString()}
+                          </div>
+                          <div className="mb-2 text-end w-100">
+                            <Badge variant={item.type === 'credit' ? 'success' : 'danger'}>
+                              {item.type === 'credit' ? 'Income' : 'Expense'}
+                            </Badge>
+                          </div>
+
+                          <div className="transaction-actions-mobile justify-content-end">
+                            <button type="button" className="btn-icon-outline" onClick={() => handleEdit(item)} title="Edit Transaction">
+                              <Pencil size={12} />
+                            </button>
+                            <button type="button" className="btn-icon-outline btn-delete" onClick={() => setDeleteTarget(item)} title="Delete Transaction">
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
-                ))}
+                ))
+                )}
               </tbody>
             </table>
           </div>

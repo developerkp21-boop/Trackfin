@@ -62,10 +62,11 @@ const AddTransaction = () => {
               placeholder="0.00"
               value={formValues.amount}
               onChange={handleChange}
+              wrapperClassName="mb-0"
             />
           </div>
           <div className="col-md-6">
-            <Select label="Category" name="category" value={formValues.category} onChange={handleChange}>
+            <Select label="Category" name="category" value={formValues.category} onChange={handleChange} wrapperClassName="mb-0" isSearchable>
               {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -74,10 +75,10 @@ const AddTransaction = () => {
             </Select>
           </div>
           <div className="col-md-6">
-            <Input label="Date" name="date" type="date" value={formValues.date} onChange={handleChange} />
+            <Input label="Date" name="date" type="date" value={formValues.date} onChange={handleChange} wrapperClassName="mb-0" />
           </div>
           <div className="col-md-6">
-            <Input label="Reference" name="reference" placeholder="Invoice or memo" />
+            <Input label="Reference" name="reference" placeholder="Invoice or memo" wrapperClassName="mb-0" />
           </div>
           <div className="col-12">
             <TextArea

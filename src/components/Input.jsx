@@ -1,5 +1,5 @@
-const Input = ({ label, helper, error, className = '', ...props }) => (
-  <div className="mb-3">
+const Input = ({ label, helper, error, className = '', wrapperClassName = 'mb-3', ...props }) => (
+  <div className={wrapperClassName}>
     {label && <label className="form-label fw-medium text-secondary small">{label}</label>}
     <input 
       className={`form-control rounded-3 px-3 py-2 ${error ? 'is-invalid' : ''} ${className}`} 

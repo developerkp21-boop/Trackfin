@@ -12,6 +12,7 @@ import {
 import PageHeader from '../../components/PageHeader'
 import Card from '../../components/Card'
 import Input from '../../components/Input'
+import Select from '../../components/Select'
 import Button from '../../components/Button'
 import Badge from '../../components/Badge'
 import { adminSystemFeatures, adminAnnouncementsList } from '../../data/mockData'
@@ -233,17 +234,18 @@ const SystemSettings = () => {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label small text-app-secondary">Type</label>
-                <select
-                  className="form-select rounded-3"
+                <Select
+                  label="Type"
                   value={annForm.type}
                   onChange={(e) => setAnnForm((f) => ({ ...f, type: e.target.value }))}
+                  wrapperClassName="mb-0"
+                  isSearchable
                 >
                   <option value="info">Info</option>
                   <option value="success">Success</option>
                   <option value="warning">Warning</option>
                   <option value="danger">Alert</option>
-                </select>
+                </Select>
               </div>
               <div className="d-flex justify-content-end">
                 <Button onClick={createAnnouncement}>Publish Announcement</Button>

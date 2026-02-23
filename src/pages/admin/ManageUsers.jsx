@@ -102,21 +102,19 @@ const ManageUsers = () => {
               </div>
 
               <div className="col-lg-2 col-md-3 col-6">
-                <label className="form-label small fw-bold text-app-secondary mb-1">Role</label>
-                <select className="form-select rounded-3 border-light bg-white shadow-sm small" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+                <Select label="Role" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} wrapperClassName="mb-0" isSearchable>
                   <option value="all">All Roles</option>
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
-                </select>
+                </Select>
               </div>
 
               <div className="col-lg-2 col-md-3 col-6">
-                <label className="form-label small fw-bold text-app-secondary mb-1">Status</label>
-                <select className="form-select rounded-3 border-light bg-white shadow-sm small" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <Select label="Status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} wrapperClassName="mb-0" isSearchable>
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="deactivated">Deactivated</option>
-                </select>
+                </Select>
               </div>
 
               <div className="col-lg-4 col-md-12 d-flex flex-column flex-sm-row gap-2 align-items-sm-end">

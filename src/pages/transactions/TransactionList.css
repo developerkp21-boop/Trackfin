@@ -1,0 +1,130 @@
+@media (max-width: 991.98px) {
+  .transaction-list-wrapper .table-responsive {
+    overflow: visible !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .transaction-table {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .transaction-table tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .transaction-table tbody tr {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    background: #ffffff !important;
+    border: 1px solid #eef2f6 !important;
+    border-radius: 1rem !important;
+    padding: 1rem !important;
+    margin: 0 !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+  }
+
+  .transaction-table tbody td.mobile-card-container {
+    display: block !important;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .mobile-card-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .mobile-card-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .mobile-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 0.5rem;
+  }
+
+  .mobile-name {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+  }
+
+  .mobile-date-text {
+    font-size: 0.8rem !important;
+    color: #4a5568 !important;
+  }
+
+  .mobile-id-text {
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+  }
+
+  .mobile-account-text {
+    font-size: 0.8rem !important;
+    color: #4a5568 !important;
+  }
+
+  .mobile-account-text b {
+    color: #1a202c;
+  }
+
+  .mobile-amount {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: right;
+    width: 100%;
+    margin-bottom: 0.4rem;
+  }
+
+  .transaction-actions-mobile {
+    display: flex !important;
+    gap: 0.35rem !important;
+    margin-top: 0.25rem;
+  }
+
+  .btn-icon-outline {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #cbd5e0 !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
+    color: #4a5568 !important;
+    transition: all 0.2s ease;
+  }
+
+  .btn-icon-outline svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .btn-icon-outline:hover {
+    border-color: var(--bs-primary) !important;
+    color: var(--bs-primary) !important;
+  }
+
+  .btn-icon-outline.btn-delete {
+    border-color: #feb2b2 !important;
+    color: #e53e3e !important;
+  }
+
+  .btn-icon-outline.btn-delete:hover {
+    background: #fff5f5 !important;
+  }
+}
