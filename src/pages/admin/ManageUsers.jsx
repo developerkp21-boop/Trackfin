@@ -87,29 +87,50 @@ const ManageUsers = () => {
 
             /* Mobile View (≤ 768px) */
             @media (max-width: 768px) {
+              /* Remove glass-card styles (background, border, shadow, padding) */
+              .glass-card {
+                background: transparent !important;
+                background-color: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                transition: none !important;
+                border-radius: 0 !important;
+              }
+
+              /* Reduce top-level container padding for more usable width */
+              .manage-users-wrapper {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+              }
+
               .table-responsive {
                 overflow: visible !important;
                 border: none !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                width: 100% !important;
               }
+
               .table {
-                background: transparent !important;
-                border: none !important;
-                border-collapse: separate !important;
-                border-spacing: 0 0.5rem !important;
+                width: 100% !important;
+                margin: 0 !important;
               }
-              .table thead {
-                display: none !important;
-              }
+
               .table tbody tr {
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: wrap !important;
                 background: #ffffff !important;
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 0.5rem !important;
-                padding: 0.5rem 0.625rem !important;
+                border-top: 1px solid #e2e8f0 !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                border-left: none !important;
+                border-right: none !important;
+                border-radius: 0 !important;
+                padding: 0.5rem 0.75rem !important;
                 margin-bottom: 0.5rem !important;
                 box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
                 gap: 0.375rem !important;
