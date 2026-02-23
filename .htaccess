@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Handle old encoded auth paths and redirect to new clean routes.
+  RewriteRule ^auth%3[fF]tab=signin$ /auth/signin [R=302,L,NC,NE]
+  RewriteRule ^auth%3[fF]tab=signup$ /auth/signup [R=302,L,NC,NE]
+
+  # If the request is for an existing file/folder, serve it directly.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # SPA fallback for React Router routes.
+  RewriteRule ^ index.html [L]
+</IfModule>

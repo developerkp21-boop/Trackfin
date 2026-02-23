@@ -1,7 +1,7 @@
 /**
  * adminApi.js
  * Centralized Axios-like service for all Admin API calls.
- * Uses /api/trackfin/admin/* prefix with Bearer token authentication.
+ * Uses /api/trackfin/admin/* prefix with secure httpOnly cookie auth.
  *
  * When the Laravel backend is ready, these functions are plug-and-play.
  * Currently returns mock data from mockData.js as a development fallback.
@@ -35,16 +35,13 @@ const ADMIN_API_BASE =
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA !== 'false'
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('trackfin-token')
-  return {
-    'Content-Type': 'application/json',
-    Authorization: token ? `Bearer ${token}` : '',
-  }
-}
+const getAuthHeaders = () => ({
+  'Content-Type': 'application/json',
+})
 
 const adminFetch = async (endpoint, options = {}) => {
   const response = await fetch(`${ADMIN_API_BASE}${endpoint}`, {
+    credentials: 'include',
     ...options,
     headers: {
       ...getAuthHeaders(),

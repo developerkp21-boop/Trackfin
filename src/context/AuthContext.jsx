@@ -6,17 +6,21 @@ import { ENABLE_AUTH_GUARD } from "../config/featureFlags";
 
 const AuthContext = createContext(null);
 const ENABLE_DEMO_AUTH = import.meta.env.VITE_ENABLE_DEMO_AUTH === "true";
+const ALLOW_DEMO_AUTH = ENABLE_DEMO_AUTH && import.meta.env.DEV;
 const AUTH_API_BASE = (
   import.meta.env.VITE_AUTH_API_BASE || "/api/trackfin/auth"
 ).replace(/\/$/, "");
 const TRACKFIN_API_BASE = (
-  import.meta.env.VITE_TRACKFIN_API_BASE ||
-  AUTH_API_BASE.replace(/\/auth$/, "")
+  import.meta.env.VITE_TRACKFIN_API_BASE || AUTH_API_BASE.replace(/\/auth$/, "")
 ).replace(/\/$/, "");
 const AUTH_LOGIN_ENDPOINT = `${AUTH_API_BASE}/login`;
 const AUTH_REGISTER_ENDPOINT = `${AUTH_API_BASE}/register`;
+const AUTH_VERIFY_OTP_ENDPOINT = `${AUTH_API_BASE}/verify-otp`;
+const AUTH_RESEND_OTP_ENDPOINT = `${AUTH_API_BASE}/resend-otp`;
 const AUTH_LOGOUT_ENDPOINT = `${AUTH_API_BASE}/logout`;
 const AUTH_ME_ENDPOINT = `${AUTH_API_BASE}/me`;
+const AUTH_PROFILE_ENDPOINT = `${TRACKFIN_API_BASE}/profile`;
+const AUTH_PASSWORD_ENDPOINT = `${TRACKFIN_API_BASE}/profile/password`;
 const ADMIN_DASHBOARD_ENDPOINT = `${TRACKFIN_API_BASE}/admin/dashboard`;
 const USER_DASHBOARD_ENDPOINT = `${TRACKFIN_API_BASE}/user/dashboard`;
 
@@ -58,9 +62,7 @@ const AuthProvider = ({ children }) => {
       : typeof incomingUser.roles === "string"
         ? [incomingUser.roles]
         : [];
-    const roles = rawRoles
-      .map((role) => normalizeRole(role))
-      .filter(Boolean);
+    const roles = rawRoles.map((role) => normalizeRole(role)).filter(Boolean);
     const primaryRole =
       normalizeRole(incomingUser.role) ||
       normalizeRole(incomingUser.userRole) ||
@@ -79,45 +81,13 @@ const AuthProvider = ({ children }) => {
     };
   };
 
-  const loadStoredSession = () => {
-    const storedToken = localStorage.getItem("trackfin-token");
-    const storedUser = localStorage.getItem("trackfin-user");
-    const hasValidToken =
-      Boolean(storedToken) &&
-      storedToken !== "undefined" &&
-      storedToken !== "null";
-
-    if (hasValidToken && storedUser) {
-      setToken(storedToken);
-      try {
-        setUser(normalizeUser(JSON.parse(storedUser)));
-      } catch (error) {
-        localStorage.removeItem("trackfin-token");
-        localStorage.removeItem("trackfin-user");
-        setToken(null);
-        setUser(null);
-      }
-    }
-  };
-
-  useEffect(() => {
-    try {
-      loadStoredSession();
-    } catch (error) {
-      console.error("Failed to load stored session:", error);
-      clearSession();
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const saveSession = (newToken, newUser) => {
+  const saveSession = (newUser, newToken = null) => {
     const normalizedUser = normalizeUser(newUser);
-
     setToken(newToken);
     setUser(normalizedUser);
-    localStorage.setItem("trackfin-token", newToken);
-    localStorage.setItem("trackfin-user", JSON.stringify(normalizedUser));
+    if (newToken) {
+      localStorage.setItem("trackfin_token", newToken);
+    }
   };
 
   const resolveAuthPayload = (response) => {
@@ -132,6 +102,7 @@ const AuthProvider = ({ children }) => {
 
     const token =
       data.token ||
+      data.plainTextToken ||
       data.accessToken ||
       data.access_token ||
       data.jwt ||
@@ -149,35 +120,98 @@ const AuthProvider = ({ children }) => {
     return { token, user };
   };
 
-  const resolveRoleByAccess = async (authToken, fallbackRole = "user") => {
-    if (!authToken) return fallbackRole;
-
+  const resolveRoleByAccess = async (fallbackRole = "user") => {
     try {
-      await apiRequest(ADMIN_DASHBOARD_ENDPOINT, { method: "GET" }, authToken);
+      await apiRequest(ADMIN_DASHBOARD_ENDPOINT, { method: "GET" });
       return "admin";
-    } catch (error) {
+    } catch {
       try {
-        await apiRequest(USER_DASHBOARD_ENDPOINT, { method: "GET" }, authToken);
+        await apiRequest(USER_DASHBOARD_ENDPOINT, { method: "GET" });
         return "user";
-      } catch (innerError) {
+      } catch {
         return fallbackRole;
       }
     }
   };
 
-  const ensureUserRole = async (authToken, incomingUser) => {
+  const ensureUserRole = async (incomingUser) => {
     const explicitRole = extractRoleFromUser(incomingUser);
     if (explicitRole) return { ...incomingUser, role: explicitRole };
 
-    const resolvedRole = await resolveRoleByAccess(authToken, "user");
+    const resolvedRole = await resolveRoleByAccess("user");
     return { ...(incomingUser || {}), role: resolvedRole };
   };
 
   const clearSession = () => {
     setToken(null);
     setUser(null);
-    localStorage.removeItem("trackfin-token");
-    localStorage.removeItem("trackfin-user");
+    localStorage.removeItem("trackfin_token");
+  };
+
+  // Bootstraps auth from secure cookie on first load.
+  useEffect(() => {
+    let isMounted = true;
+
+    const bootstrapSession = async () => {
+      try {
+        const storedToken = localStorage.getItem("trackfin_token");
+        if (storedToken) {
+          setToken(storedToken);
+        }
+
+        const response = await apiRequest(AUTH_ME_ENDPOINT, { method: "GET" });
+        const { user: meUser } = resolveAuthPayload(response);
+        if (!meUser) {
+          if (isMounted) clearSession();
+          return;
+        }
+
+        const userWithRole = await ensureUserRole(meUser);
+        if (isMounted) saveSession(userWithRole, storedToken);
+      } catch {
+        if (isMounted) clearSession();
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    bootstrapSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const normalizeAuthError = (error, fallbackMessage) => {
+    if (error instanceof Error) {
+      if (!error.message) {
+        error.message = fallbackMessage;
+      }
+      return error;
+    }
+
+    const normalizedError = new Error(fallbackMessage);
+    if (error && typeof error === "object") {
+      normalizedError.status = error.status || null;
+      normalizedError.payload = error.payload || null;
+      normalizedError.errors = error.errors || null;
+    }
+    return normalizedError;
+  };
+
+  const createVerificationRequiredError = (
+    message = "Email verification is required.",
+    email = "",
+  ) => {
+    const error = new Error(message);
+    error.requiresVerification = true;
+    error.email = email;
+    error.payload = {
+      requires_verification: true,
+      email,
+      message,
+    };
+    return error;
   };
 
   const login = async (email, password) => {
@@ -188,29 +222,39 @@ const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      const { token: authToken, user: authUser } = resolveAuthPayload(response);
-      if (!authToken || !authUser) {
+      if (response?.requires_verification) {
+        throw createVerificationRequiredError(
+          response.message || "Email verification is pending.",
+          response.email || email,
+        );
+      }
+
+      const { user: authUser } = resolveAuthPayload(response);
+      if (!authUser) {
         throw new Error("Invalid login response");
       }
 
-      const userWithRole = await ensureUserRole(authToken, authUser);
-      saveSession(authToken, userWithRole);
+      const userWithRole = await ensureUserRole(authUser);
+      saveSession(userWithRole, resolveAuthPayload(response).token);
       toast.success("Welcome back!");
       navigate(
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
       );
     } catch (error) {
-      if (ENABLE_DEMO_AUTH) {
+      if (ALLOW_DEMO_AUTH) {
         const role = email?.includes("admin") ? "admin" : "user";
-        saveSession("demo-token", {
-          name: email?.split("@")[0] || "Demo User",
-          email,
-          role,
-        });
+        saveSession(
+          {
+            name: email?.split("@")[0] || "Demo User",
+            email,
+            role,
+          },
+          "demo-token",
+        );
         toast.success("Signed in with demo profile.");
         navigate(role === "admin" ? "/admin" : "/dashboard");
       } else {
-        toast.error(error.message || "Login failed");
+        throw normalizeAuthError(error, "Login failed");
       }
     } finally {
       setLoading(false);
@@ -220,71 +264,172 @@ const AuthProvider = ({ children }) => {
   const register = async (payload) => {
     setLoading(true);
     try {
+      const apiPayload = {
+        name: payload.name,
+        email: payload.email,
+        password: payload.password,
+        password_confirmation:
+          payload.password_confirmation || payload.password,
+      };
+
       const response = await apiRequest(AUTH_REGISTER_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(apiPayload),
       });
 
-      const { token: authToken, user: authUser } = resolveAuthPayload(response);
-      if (!authToken || !authUser) {
+      if (response?.requires_verification) {
+        throw createVerificationRequiredError(
+          response.message || "Please verify your email using OTP.",
+          response.email || payload.email,
+        );
+      }
+
+      const { user: authUser } = resolveAuthPayload(response);
+      if (!authUser) {
         throw new Error("Invalid registration response");
       }
 
-      const userWithRole = await ensureUserRole(authToken, authUser);
-      saveSession(authToken, userWithRole);
+      const userWithRole = await ensureUserRole(authUser);
+      saveSession(userWithRole, resolveAuthPayload(response).token);
       toast.success("Account created successfully.");
-      navigate(normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard");
+      navigate(
+        normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
+      );
     } catch (error) {
-      if (ENABLE_DEMO_AUTH) {
-        saveSession("demo-token", {
-          name: payload.name || "New User",
-          email: payload.email,
-          role: "user",
-        });
+      if (ALLOW_DEMO_AUTH) {
+        saveSession(
+          {
+            name: payload.name || "New User",
+            email: payload.email,
+            role: "user",
+          },
+          "demo-token",
+        );
         toast.success("Account created with demo profile.");
         navigate("/dashboard");
       } else {
-        toast.error(error.message || "Registration failed");
+        throw normalizeAuthError(error, "Registration failed");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = async () => {
+  const verifyOtp = async (email, otp) => {
+    setLoading(true);
     try {
-      await apiRequest(AUTH_LOGOUT_ENDPOINT, { method: "POST" }, token);
+      const response = await apiRequest(AUTH_VERIFY_OTP_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const { user: authUser } = resolveAuthPayload(response);
+      if (!authUser) {
+        throw new Error("Invalid OTP verification response");
+      }
+
+      const userWithRole = await ensureUserRole(authUser);
+      saveSession(userWithRole, resolveAuthPayload(response).token);
+      toast.success("Email verified successfully.");
+      navigate(
+        normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
+      );
     } catch (error) {
-      // Even if the API fails, we still clear the session.
+      throw normalizeAuthError(error, "OTP verification failed");
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOtp = async (email) => {
+    const response = await apiRequest(AUTH_RESEND_OTP_ENDPOINT, {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+
+    const message =
+      (response && typeof response === "object" && response.message) ||
+      "OTP sent successfully.";
+    toast.success(message);
+    return response;
+  };
+
+  const logout = async () => {
+    const finalizeLogout = () => {
       clearSession();
-      navigate("/auth?tab=signin");
+      navigate("/auth/signin");
+    };
+
+    if (!user) {
+      finalizeLogout();
+      return;
+    }
+
+    try {
+      await apiRequest(AUTH_LOGOUT_ENDPOINT, { method: "POST" });
+      finalizeLogout();
+    } catch (error) {
+      if (error?.status === 401) {
+        finalizeLogout();
+        return;
+      }
+
+      toast.error("Logout failed on server. Please try again.");
     }
   };
 
   const refreshProfile = async () => {
-    if (!token) return;
     try {
-      const response = await apiRequest(
-        AUTH_ME_ENDPOINT,
-        { method: "GET" },
-        token,
-      );
+      const response = await apiRequest(AUTH_ME_ENDPOINT, { method: "GET" });
       const { user: meUser } = resolveAuthPayload(response);
-      if (!meUser) return;
-      const userWithRole = await ensureUserRole(token, meUser);
-      saveSession(token, userWithRole);
+      if (!meUser) {
+        clearSession();
+        return;
+      }
+
+      const userWithRole = await ensureUserRole(meUser);
+      saveSession(userWithRole, token);
     } catch (error) {
-      if (import.meta.env.DEV) return;
-      toast.error("Session expired. Please sign in again.");
       clearSession();
-      navigate("/auth?tab=signin");
+      if (error?.status !== 401) {
+        toast.error("Session expired. Please sign in again.");
+      }
     }
   };
 
-  const updateProfile = (payload) => {
-    const updatedUser = { ...user, ...payload };
-    saveSession(token, updatedUser);
+  const updateProfile = async (payload) => {
+    try {
+      const isFormData = payload instanceof FormData;
+
+      if (isFormData) {
+        payload.append("_method", "PUT");
+      }
+
+      const response = await apiRequest(AUTH_PROFILE_ENDPOINT, {
+        method: isFormData ? "POST" : "PUT",
+        body: isFormData ? payload : JSON.stringify(payload),
+      });
+      if (response?.user) {
+        const userWithRole = await ensureUserRole(response.user);
+        saveSession(userWithRole, token);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      throw normalizeAuthError(error, "Failed to update profile");
+    }
+  };
+
+  const updatePassword = async (payload) => {
+    try {
+      await apiRequest(AUTH_PASSWORD_ENDPOINT, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+      return true;
+    } catch (error) {
+      throw normalizeAuthError(error, "Failed to update password");
+    }
   };
 
   const authGuardEnabled = ENABLE_AUTH_GUARD;
@@ -298,10 +443,13 @@ const AuthProvider = ({ children }) => {
         authGuardEnabled,
         login,
         register,
+        verifyOtp,
+        resendOtp,
         logout,
         refreshProfile,
         updateProfile,
-        isAuthenticated: Boolean(token),
+        updatePassword,
+        isAuthenticated: Boolean(user),
       }}
     >
       {children}
@@ -317,4 +465,5 @@ const useAuth = () => {
   return context;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { AuthProvider, useAuth };

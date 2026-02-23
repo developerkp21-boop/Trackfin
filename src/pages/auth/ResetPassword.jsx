@@ -34,7 +34,7 @@ const ResetPassword = () => {
       subtitle="Choose a strong password to secure your account."
       footer={
         <p className="mb-0">
-          <Link className="fw-semibold text-success text-decoration-none" to="/auth?tab=signin">
+          <Link className="fw-semibold text-success text-decoration-none" to="/auth/signin">
             Back to sign in
           </Link>
         </p>

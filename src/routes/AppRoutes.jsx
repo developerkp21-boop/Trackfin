@@ -35,8 +35,9 @@ const AppRoutes = () => (
     <Route path="/" element={<Navigate to="/auth" replace />} />
 
     <Route path="/auth" element={<AuthPage />} />
-    <Route path="/login" element={<Navigate to="/auth?tab=signin" replace />} />
-    <Route path="/register" element={<Navigate to="/auth?tab=signup" replace />} />
+    <Route path="/auth/:tab" element={<AuthPage />} />
+    <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
+    <Route path="/register" element={<Navigate to="/auth/signup" replace />} />
     <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route path="/reset-password" element={<ResetPassword />} />
 
