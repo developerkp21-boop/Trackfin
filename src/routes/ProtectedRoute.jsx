@@ -1,24 +1,24 @@
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import LoadingSpinner from '../components/LoadingSpinner'
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading, authGuardEnabled } = useAuth()
-  const location = useLocation()
+  const { isAuthenticated, isInitializing, authGuardEnabled } = useAuth();
+  const location = useLocation();
 
   if (!authGuardEnabled) {
-    return children
+    return children;
   }
 
-  if (loading) {
-    return <LoadingSpinner label="Checking session" />
+  if (isInitializing) {
+    return <LoadingSpinner label="Checking session" />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/signin" state={{ from: location }} replace />
+    return <Navigate to="/auth/signin" state={{ from: location }} replace />;
   }
 
-  return children
-}
+  return children;
+};
 
-export default ProtectedRoute
+export default ProtectedRoute;

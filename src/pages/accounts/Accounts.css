@@ -1,0 +1,120 @@
+/* Accounts page specific styles */
+
+.account-card-container {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.account-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Slightly darker for better contrast */
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px; /* Wider gap for better thumb reach */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  border-radius: inherit; /* Perfect match for Card radius */
+}
+
+.account-card-container:hover .account-card-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hover-action-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #64748b;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.hover-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.hover-action-btn.btn-delete {
+  color: #ef4444;
+}
+
+.hover-action-btn.btn-add {
+  color: #10b981;
+}
+
+.hover-action-btn.btn-edit {
+  color: #3b82f6;
+}
+
+.balance-text {
+  font-family: inherit;
+}
+
+/* Modal System */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content-wrapper {
+  max-width: 550px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Custom scrollbar for modal content */
+.modal-content-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-content-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}

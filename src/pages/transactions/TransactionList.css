@@ -52,7 +52,7 @@
   .mobile-card-right {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     padding-left: 0.5rem;
   }
 
@@ -127,4 +127,56 @@
   .btn-icon-outline.btn-delete:hover {
     background: #fff5f5 !important;
   }
+
+  .modal-backdrop {
+    padding: 1rem !important;
+  }
+
+  .modal-content-wrapper {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    margin: auto !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .modal-content-wrapper::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .modal-content-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+
+  .filter-badge {
+    width: 8px;
+    height: 8px;
+    background: #a8df8e;
+    border-radius: 50%;
+    display: none;
+  }
+
+  .filter-badge.active {
+    display: block;
+  }
+}
+
+/* Horizontal alignment fix for custom dropdowns vs text inputs */
+.form-control,
+.form-select {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.search-tx-input {
+  padding-left: 45px !important;
+}
+
+/* Modal form refinement */
+.modal-content-wrapper .form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.25rem;
 }

@@ -5,8 +5,7 @@ import { apiRequest } from "../services/api";
 import { ENABLE_AUTH_GUARD } from "../config/featureFlags";
 
 const AuthContext = createContext(null);
-const ENABLE_DEMO_AUTH = import.meta.env.VITE_ENABLE_DEMO_AUTH === "true";
-const ALLOW_DEMO_AUTH = ENABLE_DEMO_AUTH && import.meta.env.DEV;
+// Demo auth removed for security
 const AUTH_API_BASE = (
   import.meta.env.VITE_AUTH_API_BASE || "/api/trackfin/auth"
 ).replace(/\/$/, "");
@@ -28,7 +27,8 @@ const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const normalizeRole = (value) => {
     if (typeof value !== "string") return null;
@@ -148,6 +148,10 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("trackfin_token");
   };
 
+  const finalizeInitialization = () => {
+    setIsInitializing(false);
+  };
+
   // Bootstraps auth from secure cookie on first load.
   useEffect(() => {
     let isMounted = true;
@@ -157,6 +161,10 @@ const AuthProvider = ({ children }) => {
         const storedToken = localStorage.getItem("trackfin_token");
         if (storedToken) {
           setToken(storedToken);
+        } else {
+          // If no token, we can stop here
+          if (isMounted) setLoading(false);
+          return;
         }
 
         const response = await apiRequest(AUTH_ME_ENDPOINT, { method: "GET" });
@@ -171,7 +179,7 @@ const AuthProvider = ({ children }) => {
       } catch {
         if (isMounted) clearSession();
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) finalizeInitialization();
       }
     };
 
@@ -181,6 +189,47 @@ const AuthProvider = ({ children }) => {
       isMounted = false;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Inactivity Timer (120 minutes)
+  useEffect(() => {
+    if (!user) return;
+
+    const INACTIVITY_LIMIT = 120 * 60 * 1000; // 120 minutes in ms
+    let timeoutId;
+
+    const handleLogout = () => {
+      toast("Logging out due to inactivity", { icon: "🕒" });
+      logout();
+    };
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleLogout, INACTIVITY_LIMIT);
+    };
+
+    // Events to track activity
+    const activityEvents = [
+      "mousedown",
+      "mousemove",
+      "keydown",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+
+    activityEvents.forEach((event) =>
+      window.addEventListener(event, resetTimer),
+    );
+
+    resetTimer(); // Initialize timer
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      activityEvents.forEach((event) =>
+        window.removeEventListener(event, resetTimer),
+      );
+    };
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const normalizeAuthError = (error, fallbackMessage) => {
     if (error instanceof Error) {
@@ -214,12 +263,12 @@ const AuthProvider = ({ children }) => {
     return error;
   };
 
-  const login = async (email, password) => {
+  const login = async (email, password, rememberMe = false) => {
     setLoading(true);
     try {
       const response = await apiRequest(AUTH_LOGIN_ENDPOINT, {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, remember_me: rememberMe }),
       });
 
       if (response?.requires_verification) {
@@ -241,21 +290,7 @@ const AuthProvider = ({ children }) => {
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
       );
     } catch (error) {
-      if (ALLOW_DEMO_AUTH) {
-        const role = email?.includes("admin") ? "admin" : "user";
-        saveSession(
-          {
-            name: email?.split("@")[0] || "Demo User",
-            email,
-            role,
-          },
-          "demo-token",
-        );
-        toast.success("Signed in with demo profile.");
-        navigate(role === "admin" ? "/admin" : "/dashboard");
-      } else {
-        throw normalizeAuthError(error, "Login failed");
-      }
+      throw normalizeAuthError(error, "Login failed");
     } finally {
       setLoading(false);
     }
@@ -296,20 +331,7 @@ const AuthProvider = ({ children }) => {
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
       );
     } catch (error) {
-      if (ALLOW_DEMO_AUTH) {
-        saveSession(
-          {
-            name: payload.name || "New User",
-            email: payload.email,
-            role: "user",
-          },
-          "demo-token",
-        );
-        toast.success("Account created with demo profile.");
-        navigate("/dashboard");
-      } else {
-        throw normalizeAuthError(error, "Registration failed");
-      }
+      throw normalizeAuthError(error, "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -440,6 +462,7 @@ const AuthProvider = ({ children }) => {
         user,
         token,
         loading,
+        isInitializing,
         authGuardEnabled,
         login,
         register,

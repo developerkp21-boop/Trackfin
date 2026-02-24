@@ -11,7 +11,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { useAuth } from "../../context/AuthContext";
 
-const DEMO_AUTH_ENABLED = import.meta.env.VITE_ENABLE_DEMO_AUTH === "true";
+// Demo auth removed for security
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NAME_LENGTH = 255;
 const MAX_EMAIL_LENGTH = 255;
@@ -79,6 +79,7 @@ const AuthPage = () => {
 
   const [loginErrors, setLoginErrors] = useState({});
   const [registerErrors, setRegisterErrors] = useState({});
+  const [rememberMe, setRememberMe] = useState(false);
   const [otpContext, setOtpContext] = useState({
     active: false,
     email: "",
@@ -176,7 +177,7 @@ const AuthPage = () => {
     setOtpInfo("");
     if (!validateLogin()) return;
     try {
-      await login(loginValues.email.trim(), loginValues.password);
+      await login(loginValues.email.trim(), loginValues.password, rememberMe);
     } catch (error) {
       const verificationState = resolveVerificationState(error);
       if (verificationState.required) {
@@ -458,6 +459,7 @@ const AuthPage = () => {
                 label="Email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="you@company.com"
                 value={loginValues.email}
                 onChange={handleLoginChange}
@@ -470,6 +472,7 @@ const AuthPage = () => {
                 label="Password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="••••••••"
                 value={loginValues.password}
                 onChange={handleLoginChange}
@@ -486,6 +489,8 @@ const AuthPage = () => {
                     type="checkbox"
                     className="form-check-input"
                     id="rememberMe"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                   />
                   <label
                     className="form-check-label text-app-secondary"
@@ -518,6 +523,7 @@ const AuthPage = () => {
               <Input
                 label="Full name"
                 name="name"
+                autoComplete="name"
                 placeholder="Alex Carter"
                 value={registerValues.name}
                 onChange={handleRegisterChange}
@@ -530,6 +536,7 @@ const AuthPage = () => {
                 label="Work email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="alex@company.com"
                 value={registerValues.email}
                 onChange={handleRegisterChange}
@@ -544,6 +551,7 @@ const AuthPage = () => {
                 label="Password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 value={registerValues.password}
                 onChange={handleRegisterChange}
@@ -558,6 +566,7 @@ const AuthPage = () => {
                 label="Confirm Password"
                 name="password_confirmation"
                 type="password"
+                autoComplete="new-password"
                 placeholder="••••••••"
                 value={registerValues.password_confirmation}
                 onChange={handleRegisterChange}
@@ -586,51 +595,10 @@ const AuthPage = () => {
         </div>
       </div>
 
-      {DEMO_AUTH_ENABLED ? (
-        <div className="auth-tip rounded-3 p-3 small mt-3">
-          <p className="text-app-secondary text-center mb-2 fw-semibold">
-            🚀 Demo Credentials
-          </p>
-          <div className="d-flex flex-column gap-1">
-            <div
-              className="d-flex align-items-center justify-content-between px-2 py-1 rounded-2"
-              style={{
-                background: "rgba(var(--brand-primary-rgb, 99,102,241),0.08)",
-              }}
-            >
-              <span className="text-app-secondary">Admin Dashboard</span>
-              <code className="small fw-semibold text-success">
-                admin@demo.com
-              </code>
-            </div>
-            <div
-              className="d-flex align-items-center justify-content-between px-2 py-1 rounded-2"
-              style={{
-                background: "rgba(var(--brand-primary-rgb, 99,102,241),0.05)",
-              }}
-            >
-              <span className="text-app-secondary">User Dashboard</span>
-              <code
-                className="small fw-semibold"
-                style={{ color: "var(--brand-primary)" }}
-              >
-                user@demo.com
-              </code>
-            </div>
-          </div>
-          <p
-            className="text-app-muted text-center mt-2 mb-0"
-            style={{ fontSize: "0.72rem" }}
-          >
-            Any password works in demo mode
-          </p>
-        </div>
-      ) : (
-        <div className="auth-tip rounded-3 p-3 small text-app-secondary text-center mt-3">
-          Use registered account credentials to sign in. Admin access depends on
-          assigned role.
-        </div>
-      )}
+      <div className="auth-tip rounded-3 p-3 small text-app-secondary text-center mt-3">
+        Use registered account credentials to sign in. Admin access depends on
+        assigned role.
+      </div>
     </AuthLayout>
   );
 };

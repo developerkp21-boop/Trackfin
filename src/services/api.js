@@ -79,3 +79,14 @@ export const apiRequest = async (endpoint, options = {}, tokenOverride) => {
 
   return {};
 };
+export const AUTH_LOGIN_ENDPOINT = "/trackfin/auth/login";
+export const AUTH_REGISTER_ENDPOINT = "/trackfin/auth/register";
+export const AUTH_VERIFY_OTP_ENDPOINT = "/trackfin/auth/verify-otp";
+export const AUTH_RESEND_OTP_ENDPOINT = "/trackfin/auth/resend-otp";
+export const AUTH_ME_ENDPOINT = "/trackfin/auth/me";
+export const ADMIN_DASHBOARD_ENDPOINT = "/trackfin/admin/dashboard";
+export const USER_DASHBOARD_ENDPOINT = "/trackfin/user/dashboard";
+
+export const CATEGORIES_ENDPOINT = "/trackfin/categories";
+export const PAYMENT_METHODS_ENDPOINT = "/trackfin/payment-methods";
+export const TRANSACTIONS_ENDPOINT = "/trackfin/transactions";

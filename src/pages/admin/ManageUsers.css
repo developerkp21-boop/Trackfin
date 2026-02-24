@@ -12,7 +12,12 @@
     transition: background-color 0.2s ease;
   }
   .manage-users-table tr:hover {
-    background-color: rgba(168, 223, 142, 0.05); /* subtle brand-primary transparent */
+    background-color: rgba(
+      168,
+      223,
+      142,
+      0.05
+    ); /* subtle brand-primary transparent */
   }
 }
 
@@ -84,7 +89,9 @@
     margin: 0 !important;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .manage-users-table tbody tr:active {
@@ -115,7 +122,7 @@
   .mobile-card-right {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     padding-left: 0.5rem;
   }
 
@@ -210,7 +217,6 @@
   }
 }
 
-
 /* Modal Polish */
 .modal-backdrop-custom {
   background: rgba(15, 23, 42, 0.45);
@@ -220,8 +226,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content-custom {
@@ -229,6 +239,12 @@
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
