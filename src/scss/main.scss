@@ -417,6 +417,21 @@ body.dark .input-field:focus {
   }
 }
 
+// ─── Cards ─────────────────────────────
+.card {
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s ease;
+  border: 1px solid var(--border-subtle) !important;
+  background-color: var(--bg-card) !important;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1) !important;
+    border-color: var(--brand-primary) !important;
+  }
+}
+
 .notification-item {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);

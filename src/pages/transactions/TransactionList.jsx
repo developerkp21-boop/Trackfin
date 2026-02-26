@@ -20,7 +20,7 @@ const initialForm = {
   date: new Date().toISOString().split("T")[0],
   amount: "",
   category_id: "",
-  payment_method_id: "",
+  account_id: "",
   account: "",
   description: "",
 };
@@ -55,16 +55,25 @@ const TransactionList = () => {
       setPaymentMethods(pms || []);
 
       // Select first options by default if form is empty
-      if (!editingId && cats?.length > 0 && pms?.length > 0) {
+      if (
+        !editingId &&
+        Array.isArray(cats) &&
+        cats.length > 0 &&
+        Array.isArray(pms) &&
+        pms.length > 0
+      ) {
         setFormValues((prev) => ({
           ...prev,
           category_id: cats[0].id,
-          payment_method_id: pms[0].id,
+          account_id: pms[0].id,
         }));
       }
     } catch (error) {
       toast.error("Failed to load transaction data");
       console.error(error);
+      setTransactions([]);
+      setCategories([]);
+      setPaymentMethods([]);
     } finally {
       setLoading(false);
     }
@@ -75,7 +84,8 @@ const TransactionList = () => {
   }, []);
 
   const filtered = useMemo(() => {
-    const list = transactions.filter((item) => {
+    const safeTx = Array.isArray(transactions) ? transactions : [];
+    const list = safeTx.filter((item) => {
       const query = search.toLowerCase();
       const bySearch =
         (item.description || "").toLowerCase().includes(query) ||
@@ -84,7 +94,7 @@ const TransactionList = () => {
       const byAccount =
         accountFilter === "all"
           ? true
-          : String(item.payment_method_id) === String(accountFilter);
+          : String(item.account_id) === String(accountFilter);
       return bySearch && byType && byAccount;
     });
 
@@ -114,7 +124,7 @@ const TransactionList = () => {
       !formValues.date ||
       !formValues.amount ||
       !formValues.category_id ||
-      !formValues.payment_method_id
+      !formValues.account_id
     ) {
       toast.error("Please fill in all required fields");
       return;
@@ -158,7 +168,7 @@ const TransactionList = () => {
       date: item.date ? item.date.split("T")[0] : "",
       amount: item.amount,
       category_id: item.category_id,
-      payment_method_id: item.payment_method_id,
+      account_id: item.account_id,
       account: item.account || "",
       description: item.description || "",
     });
@@ -287,23 +297,28 @@ const TransactionList = () => {
                       required
                     >
                       <option value="">Select category</option>
-                      {categories.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {(Array.isArray(categories) ? categories : []).map(
+                        (item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name}
+                          </option>
+                        ),
+                      )}
                     </Select>
                   </div>
                   <div className="col-md-6">
                     <Select
                       label="Account (Payment Method)"
-                      name="payment_method_id"
-                      value={formValues.payment_method_id}
+                      name="account_id"
+                      value={formValues.account_id}
                       onChange={handleFormChange}
                       required
                     >
                       <option value="">Select account</option>
-                      {paymentMethods.map((item) => (
+                      {(Array.isArray(paymentMethods)
+                        ? paymentMethods
+                        : []
+                      ).map((item) => (
                         <option key={item.id} value={item.id}>
                           {item.name} ($
                           {Number(item.balance || 0).toLocaleString()})
@@ -411,11 +426,13 @@ const TransactionList = () => {
                 wrapperClassName="mb-0"
               >
                 <option value="all">All Accounts</option>
-                {paymentMethods.map((pm) => (
-                  <option key={pm.id} value={pm.id}>
-                    {pm.name}
-                  </option>
-                ))}
+                {(Array.isArray(paymentMethods) ? paymentMethods : []).map(
+                  (pm) => (
+                    <option key={pm.id} value={pm.id}>
+                      {pm.name}
+                    </option>
+                  ),
+                )}
               </Select>
             </div>
             <div
@@ -470,7 +487,9 @@ const TransactionList = () => {
                     <tr key={item.id}>
                       <td className="d-none d-lg-table-cell">
                         <p className="mb-0">
-                          {new Date(item.date).toLocaleDateString()}
+                          {item.date
+                            ? new Date(item.date).toLocaleDateString()
+                            : "N/A"}
                         </p>
                         <p className="small text-app-muted mb-0">
                           TXN-{item.id}
@@ -495,7 +514,7 @@ const TransactionList = () => {
                         </Badge>
                       </td>
                       <td className="d-none d-lg-table-cell">
-                        {item.payment_method?.name || "N/A"}
+                        {item.account?.name || "N/A"}
                       </td>
 
                       <td className="text-end d-none d-lg-table-cell">
@@ -526,12 +545,13 @@ const TransactionList = () => {
                               {item.category?.name || "N/A"}
                             </h6>
                             <div className="mobile-date-text">
-                              {new Date(item.date).toLocaleDateString()}
+                              {item.date
+                                ? new Date(item.date).toLocaleDateString()
+                                : "N/A"}
                             </div>
                             <div className="mobile-id-text">TXN-{item.id}</div>
                             <div className="mobile-account-text mt-2">
-                              <b>Account:</b>{" "}
-                              {item.payment_method?.name || "N/A"}
+                              <b>Account:</b> {item.account?.name || "N/A"}
                             </div>
                           </div>
 

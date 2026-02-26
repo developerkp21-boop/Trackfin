@@ -9,6 +9,7 @@ import {
 import AuthLayout from "../../layouts/AuthLayout";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
+import OtpInput from "../../components/OtpInput";
 import { useAuth } from "../../context/AuthContext";
 
 // Demo auth removed for security
@@ -46,11 +47,14 @@ const resolveVerificationState = (error) => {
     };
   }
 
-  if (error?.payload?.requires_verification) {
+  const payload = error?.payload;
+  const data = payload?.data || payload;
+
+  if (payload?.requires_verification || data?.requires_verification) {
     return {
       required: true,
-      email: error.payload.email || "",
-      message: error.payload.message || "Email verification is required.",
+      email: data?.email || payload?.email || "",
+      message: payload?.message || "Email verification is required.",
     };
   }
 
@@ -119,9 +123,8 @@ const AuthPage = () => {
     }
   };
 
-  const handleOtpChange = (event) => {
-    const onlyDigits = event.target.value.replace(/\D/g, "").slice(0, 6);
-    setOtpValue(onlyDigits);
+  const handleOtpChange = (val) => {
+    setOtpValue(val);
     if (otpError) {
       setOtpError("");
     }
@@ -385,21 +388,13 @@ const AuthPage = () => {
                 onSubmit={handleOtpSubmit}
               >
                 <div>
-                  <Input
-                    name="otp"
-                    type="text"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    placeholder="Enter 6-digit OTP"
+                  <OtpInput
                     value={otpValue}
                     onChange={handleOtpChange}
                     error={otpError}
-                    className={`text-center fw-bold letter-spacing-lg mb-1 ${otpValue && !otpError ? "is-valid" : ""}`}
-                    style={{ fontSize: "1.25rem", letterSpacing: "0.5em" }}
-                    maxLength="6"
                   />
                   {!otpError && (
-                    <p className="small text-app-muted mt-1 mb-0 text-start">
+                    <p className="small text-app-muted mt-2 mb-0 text-start">
                       Code expires in 10 minutes.
                     </p>
                   )}

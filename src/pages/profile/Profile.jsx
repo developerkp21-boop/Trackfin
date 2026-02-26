@@ -29,6 +29,13 @@ import Badge from "../../components/Badge";
 import Input from "../../components/Input";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import {
+  apiRequest,
+  PROFILE_ACTIVITY_ENDPOINT,
+  PROFILE_SESSIONS_ENDPOINT,
+  PROFILE_EXPORT_ENDPOINT,
+  PROFILE_DELETE_ENDPOINT,
+} from "../../services/api";
 
 const recentActivity = [
   {
@@ -125,9 +132,8 @@ const Profile = () => {
   const fetchActivities = async (page = 1) => {
     setLoadingActivities(true);
     try {
-      const { apiRequest } = await import("../../services/api");
       const data = await apiRequest(
-        `/api/trackfin/profile/activity?page=${page}`,
+        `${PROFILE_ACTIVITY_ENDPOINT}?page=${page}`,
         {
           method: "GET",
         },
@@ -151,8 +157,7 @@ const Profile = () => {
   const fetchSessions = async () => {
     setLoadingSessions(true);
     try {
-      const { apiRequest } = await import("../../services/api");
-      const data = await apiRequest("/api/trackfin/profile/sessions", {
+      const data = await apiRequest(PROFILE_SESSIONS_ENDPOINT, {
         method: "GET",
       });
       if (data && data.sessions) {
@@ -179,9 +184,8 @@ const Profile = () => {
     }
 
     try {
-      const { apiRequest } = await import("../../services/api");
       const data = await apiRequest(
-        `/api/trackfin/profile/sessions/${sessionId}`,
+        `${PROFILE_SESSIONS_ENDPOINT}/${sessionId}`,
         {
           method: "DELETE",
         },
@@ -330,8 +334,7 @@ const Profile = () => {
 
   const handleExportData = async () => {
     try {
-      const { apiRequest } = await import("../../services/api");
-      const data = await apiRequest("/api/trackfin/profile/export", {
+      const data = await apiRequest(PROFILE_EXPORT_ENDPOINT, {
         method: "GET",
       });
 
@@ -360,8 +363,7 @@ const Profile = () => {
     if (!password) return;
 
     try {
-      const { apiRequest } = await import("../../services/api");
-      await apiRequest("/api/trackfin/profile/delete", {
+      await apiRequest(PROFILE_DELETE_ENDPOINT, {
         method: "DELETE",
         body: JSON.stringify({ password }),
       });

@@ -1,27 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { apiRequest } from "../services/api";
+import {
+  apiRequest,
+  AUTH_LOGIN_ENDPOINT,
+  AUTH_REGISTER_ENDPOINT,
+  AUTH_VERIFY_OTP_ENDPOINT,
+  AUTH_RESEND_OTP_ENDPOINT,
+  AUTH_ME_ENDPOINT,
+  AUTH_LOGOUT_ENDPOINT,
+  PROFILE_ENDPOINT,
+  PROFILE_PASSWORD_ENDPOINT,
+  ADMIN_DASHBOARD_ENDPOINT,
+  USER_DASHBOARD_ENDPOINT,
+} from "../services/api";
 import { ENABLE_AUTH_GUARD } from "../config/featureFlags";
 
 const AuthContext = createContext(null);
-// Demo auth removed for security
-const AUTH_API_BASE = (
-  import.meta.env.VITE_AUTH_API_BASE || "/api/trackfin/auth"
-).replace(/\/$/, "");
-const TRACKFIN_API_BASE = (
-  import.meta.env.VITE_TRACKFIN_API_BASE || AUTH_API_BASE.replace(/\/auth$/, "")
-).replace(/\/$/, "");
-const AUTH_LOGIN_ENDPOINT = `${AUTH_API_BASE}/login`;
-const AUTH_REGISTER_ENDPOINT = `${AUTH_API_BASE}/register`;
-const AUTH_VERIFY_OTP_ENDPOINT = `${AUTH_API_BASE}/verify-otp`;
-const AUTH_RESEND_OTP_ENDPOINT = `${AUTH_API_BASE}/resend-otp`;
-const AUTH_LOGOUT_ENDPOINT = `${AUTH_API_BASE}/logout`;
-const AUTH_ME_ENDPOINT = `${AUTH_API_BASE}/me`;
-const AUTH_PROFILE_ENDPOINT = `${TRACKFIN_API_BASE}/profile`;
-const AUTH_PASSWORD_ENDPOINT = `${TRACKFIN_API_BASE}/profile/password`;
-const ADMIN_DASHBOARD_ENDPOINT = `${TRACKFIN_API_BASE}/admin/dashboard`;
-const USER_DASHBOARD_ENDPOINT = `${TRACKFIN_API_BASE}/user/dashboard`;
 
 const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
@@ -39,8 +34,13 @@ const AuthProvider = ({ children }) => {
   const extractRoleFromUser = (incomingUser) => {
     if (!incomingUser || typeof incomingUser !== "object") return null;
 
+    const roleValue =
+      incomingUser.role && typeof incomingUser.role === "object"
+        ? incomingUser.role.name
+        : incomingUser.role;
+
     const directRole =
-      normalizeRole(incomingUser.role) ||
+      normalizeRole(roleValue) ||
       normalizeRole(incomingUser.userRole) ||
       normalizeRole(incomingUser.user_type);
     if (directRole) return directRole;
@@ -120,26 +120,13 @@ const AuthProvider = ({ children }) => {
     return { token, user };
   };
 
-  const resolveRoleByAccess = async (fallbackRole = "user") => {
-    try {
-      await apiRequest(ADMIN_DASHBOARD_ENDPOINT, { method: "GET" });
-      return "admin";
-    } catch {
-      try {
-        await apiRequest(USER_DASHBOARD_ENDPOINT, { method: "GET" });
-        return "user";
-      } catch {
-        return fallbackRole;
-      }
-    }
-  };
-
   const ensureUserRole = async (incomingUser) => {
     const explicitRole = extractRoleFromUser(incomingUser);
     if (explicitRole) return { ...incomingUser, role: explicitRole };
 
-    const resolvedRole = await resolveRoleByAccess("user");
-    return { ...(incomingUser || {}), role: resolvedRole };
+    // Default to 'user' instead of pinging backend endpoints which
+    // causes 401/403 network errors in the console log.
+    return { ...(incomingUser || {}), role: "user" };
   };
 
   const clearSession = () => {
@@ -427,7 +414,7 @@ const AuthProvider = ({ children }) => {
         payload.append("_method", "PUT");
       }
 
-      const response = await apiRequest(AUTH_PROFILE_ENDPOINT, {
+      const response = await apiRequest(PROFILE_ENDPOINT, {
         method: isFormData ? "POST" : "PUT",
         body: isFormData ? payload : JSON.stringify(payload),
       });
@@ -444,7 +431,7 @@ const AuthProvider = ({ children }) => {
 
   const updatePassword = async (payload) => {
     try {
-      await apiRequest(AUTH_PASSWORD_ENDPOINT, {
+      await apiRequest(PROFILE_PASSWORD_ENDPOINT, {
         method: "PUT",
         body: JSON.stringify(payload),
       });
