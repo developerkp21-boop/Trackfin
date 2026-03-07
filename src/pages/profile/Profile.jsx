@@ -664,10 +664,7 @@ const Profile = () => {
               <div className="mt-3 d-flex flex-column gap-2">
                 <div className="d-flex justify-content-between small py-1 border-bottom">
                   <span className="text-app-muted">Account ID</span>
-                  <span className="fw-medium text-app-primary">
-                    USR-
-                    {user?.id?.toString().slice(0, 8).toUpperCase() || "1001"}
-                  </span>
+                  <span className="fw-medium text-app-primary">{user?.display_id || "USR-????????"}</span>
                 </div>
                 <div className="d-flex justify-content-between small py-1 border-bottom">
                   <span className="text-app-muted">Member since</span>

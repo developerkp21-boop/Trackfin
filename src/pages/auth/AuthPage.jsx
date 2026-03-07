@@ -11,6 +11,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import OtpInput from "../../components/OtpInput";
 import { useAuth } from "../../context/AuthContext";
+import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 // Demo auth removed for security
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -106,6 +107,14 @@ const AuthPage = () => {
   }, [resendTimer]);
 
   const fromRoute = useMemo(() => location.state?.from, [location.state]);
+  const [showAlert, setShowAlert] = useState(!!fromRoute);
+
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => setShowAlert(false), 4000); // Auto-hide after 4 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
 
   const handleLoginChange = (event) => {
     const { name, value } = event.target;
@@ -303,13 +312,7 @@ const AuthPage = () => {
       subtitle="Mobile-ready finance workflows with secure access control."
       footer={
         <span>
-          Need help?{" "}
-          <Link
-            className="text-success fw-semibold text-decoration-none"
-            to="/forgot-password"
-          >
-            Reset password
-          </Link>
+
         </span>
       }
     >
@@ -334,7 +337,7 @@ const AuthPage = () => {
 
       <div className="card border-0 shadow-sm glass-card">
         <div className="card-body p-3 p-sm-4 card-body-mobile">
-          {fromRoute && activeTab === "signin" && (
+          {showAlert && activeTab === "signin" && (
             <div className="alert alert-info py-2 small mb-3">
               Please sign in to continue.
             </div>
@@ -446,153 +449,161 @@ const AuthPage = () => {
               </form>
             </div>
           ) : activeTab === "signin" ? (
-            <form
-              className="d-flex flex-column gap-2"
-              onSubmit={handleLoginSubmit}
-            >
-              <Input
-                label="Email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@company.com"
-                value={loginValues.email}
-                onChange={handleLoginChange}
-                error={loginErrors.email}
-                className={
-                  loginValues.email && !loginErrors.email ? "is-valid" : ""
-                }
-              />
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                value={loginValues.password}
-                onChange={handleLoginChange}
-                error={loginErrors.password}
-                className={
-                  loginValues.password && !loginErrors.password
-                    ? "is-valid"
-                    : ""
-                }
-              />
-              <div className="d-flex align-items-center justify-content-between small flex-wrap gap-2">
-                <div className="form-check m-0">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="rememberMe"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
-                  <label
-                    className="form-check-label text-app-secondary"
-                    htmlFor="rememberMe"
+            <>
+              <form
+                className="d-flex flex-column gap-2"
+                onSubmit={handleLoginSubmit}
+              >
+                <Input
+                  label="Email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@company.com"
+                  value={loginValues.email}
+                  onChange={handleLoginChange}
+                  error={loginErrors.email}
+                  className={
+                    loginValues.email && !loginErrors.email ? "is-valid" : ""
+                  }
+                />
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={loginValues.password}
+                  onChange={handleLoginChange}
+                  error={loginErrors.password}
+                  className={
+                    loginValues.password && !loginErrors.password
+                      ? "is-valid"
+                      : ""
+                  }
+                />
+                <div className="d-flex align-items-center justify-content-between small flex-wrap gap-2">
+                  <div className="form-check m-0">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="rememberMe"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
+                    <label
+                      className="form-check-label text-app-secondary"
+                      htmlFor="rememberMe"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  <Link
+                    className="fw-semibold text-decoration-none text-success"
+                    to="/forgot-password"
                   >
-                    Remember me
-                  </label>
+                    Forgot password?
+                  </Link>
                 </div>
-                <Link
-                  className="fw-semibold text-decoration-none text-success"
-                  to="/forgot-password"
+                <Button
+                  type="submit"
+                  className="w-100 mt-2"
+                  variant="success"
+                  disabled={loading}
                 >
-                  Forgot password?
-                </Link>
-              </div>
-              <Button
-                type="submit"
-                className="w-100 mt-2"
-                variant="success"
-                disabled={loading}
-              >
-                {loading ? "Signing in..." : "Sign in"}
-              </Button>
-            </form>
+                  {loading ? "Signing in..." : "Sign in"}
+                </Button>
+              </form>
+              <GoogleLoginButton />
+            </>
           ) : (
-            <form
-              className="d-flex flex-column gap-2"
-              onSubmit={handleRegisterSubmit}
-            >
-              <Input
-                label="Full name"
-                name="name"
-                autoComplete="name"
-                placeholder="Alex Carter"
-                value={registerValues.name}
-                onChange={handleRegisterChange}
-                error={registerErrors.name}
-                className={
-                  registerValues.name && !registerErrors.name ? "is-valid" : ""
-                }
-              />
-              <Input
-                label="Work email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="alex@company.com"
-                value={registerValues.email}
-                onChange={handleRegisterChange}
-                error={registerErrors.email}
-                className={
-                  registerValues.email && !registerErrors.email
-                    ? "is-valid"
-                    : ""
-                }
-              />
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                placeholder="••••••••"
-                value={registerValues.password}
-                onChange={handleRegisterChange}
-                error={registerErrors.password}
-                className={
-                  registerValues.password && !registerErrors.password
-                    ? "is-valid"
-                    : ""
-                }
-              />
-              <Input
-                label="Confirm Password"
-                name="password_confirmation"
-                type="password"
-                autoComplete="new-password"
-                placeholder="••••••••"
-                value={registerValues.password_confirmation}
-                onChange={handleRegisterChange}
-                error={registerErrors.password_confirmation}
-                className={
-                  registerValues.password_confirmation &&
-                  !registerErrors.password_confirmation
-                    ? "is-valid"
-                    : ""
-                }
-              />
-              <Button
-                type="submit"
-                className="w-100 mt-2"
-                variant="success"
-                disabled={loading}
+            <>
+              <form
+                className="d-flex flex-column gap-2"
+                onSubmit={handleRegisterSubmit}
               >
-                {loading ? "Creating account..." : "Create account"}
-              </Button>
-              <p className="small text-app-secondary mb-0">
-                By creating an account, you agree to our Terms and Privacy
-                Policy.
-              </p>
-            </form>
+                <Input
+                  label="Full name"
+                  name="name"
+                  autoComplete="name"
+                  placeholder="Alex Carter"
+                  value={registerValues.name}
+                  onChange={handleRegisterChange}
+                  error={registerErrors.name}
+                  className={
+                    registerValues.name && !registerErrors.name ? "is-valid" : ""
+                  }
+                />
+                <Input
+                  label="Work email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="alex@company.com"
+                  value={registerValues.email}
+                  onChange={handleRegisterChange}
+                  error={registerErrors.email}
+                  className={
+                    registerValues.email && !registerErrors.email
+                      ? "is-valid"
+                      : ""
+                  }
+                />
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={registerValues.password}
+                  onChange={handleRegisterChange}
+                  error={registerErrors.password}
+                  className={
+                    registerValues.password && !registerErrors.password
+                      ? "is-valid"
+                      : ""
+                  }
+                />
+                <Input
+                  label="Confirm Password"
+                  name="password_confirmation"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={registerValues.password_confirmation}
+                  onChange={handleRegisterChange}
+                  error={registerErrors.password_confirmation}
+                  className={
+                    registerValues.password_confirmation &&
+                      !registerErrors.password_confirmation
+                      ? "is-valid"
+                      : ""
+                  }
+                />
+                <Button
+                  type="submit"
+                  className="w-100 mt-2"
+                  variant="success"
+                  disabled={loading}
+                >
+                  {loading ? "Creating account..." : "Create account"}
+                </Button>
+                <p className="small text-app-secondary mb-0">
+                  By creating an account, you agree to our{" "}
+                  <Link
+                    to="/terms"
+                    target="_blank"
+                    className="text-success text-decoration-none fw-medium"
+                  >
+                    Terms and Privacy Policy
+                  </Link>
+                  .
+                </p>
+              </form>
+              <GoogleLoginButton />
+            </>
           )}
         </div>
-      </div>
-
-      <div className="auth-tip rounded-3 p-3 small text-app-secondary text-center mt-3">
-        Use registered account credentials to sign in. Admin access depends on
-        assigned role.
       </div>
     </AuthLayout>
   );

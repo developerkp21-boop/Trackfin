@@ -15,7 +15,8 @@ import {
   Lightbulb,
   TrendingUp,
   Lock,
-  FileText
+  FileText,
+  Bell
 } from 'lucide-react'
 
 export const userNavItems = [
@@ -39,7 +40,8 @@ export const adminNavItems = [
   { label: 'Financial Insights', path: '/admin/insights', icon: TrendingUp },
   { label: 'Security', path: '/admin/security', icon: Lock },
   { label: 'System Settings', path: '/admin/settings', icon: Settings },
-  { label: 'Reports & Export', path: '/admin/reports', icon: FileText }
+  { label: 'Reports & Export', path: '/admin/reports', icon: FileText },
+  { label: 'Broadcast', path: '/admin/broadcast', icon: Bell }
 ]
 
 export const adminNavGroups = [
@@ -61,6 +63,6 @@ export const adminNavGroups = [
   },
   {
     label: 'Platform',
-    items: adminNavItems.slice(5, 7)
+    items: adminNavItems.slice(5, 8)
   }
 ]

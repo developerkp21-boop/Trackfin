@@ -31,6 +31,8 @@ import {
   TRANSACTIONS_ENDPOINT,
 } from "../../services/api";
 import { toast } from "react-hot-toast";
+import Pagination from "../../components/Pagination";
+import "../transactions/TransactionList.css";
 
 const COLORS = [
   "#e77a8c",
@@ -69,6 +71,16 @@ const Overview = () => {
   const [nextBills, setNextBills] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Pagination states for Dashboard Transactions
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const paginatedTransactions = useMemo(() => {
+    const safeTx = Array.isArray(recentTransactions) ? recentTransactions : [];
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return safeTx.slice(startIndex, startIndex + itemsPerPage);
+  }, [recentTransactions, currentPage, itemsPerPage]);
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -84,8 +96,8 @@ const Overview = () => {
         setNextBills(bills || []);
       }
 
-      // Fetch recent transactions separately to use existing endpoint
-      const txResponse = await apiRequest(`${TRANSACTIONS_ENDPOINT}?limit=6`);
+      // Fetch more recent transactions to allow pagination
+      const txResponse = await apiRequest(`${TRANSACTIONS_ENDPOINT}?limit=50`);
       setRecentTransactions(Array.isArray(txResponse) ? txResponse : []);
     } catch (error) {
       toast.error("Failed to load dashboard data");
@@ -259,7 +271,7 @@ const Overview = () => {
                   </p>
                 </div>
               </div>
-              <Button variant="outline" onClick={() => {}} className="btn-sm">
+              <Button variant="outline" onClick={() => { }} className="btn-sm">
                 View Full Report →
               </Button>
             </div>
@@ -397,17 +409,14 @@ const Overview = () => {
             </div>
 
             <div className="table-responsive">
-              <table className="table table-hover align-middle mb-0">
-                <thead>
+              <table className="table table-hover align-middle mb-0 transaction-table">
+                <thead className="bg-light d-none d-lg-table-header-group">
                   <tr>
                     <th className="small text-app-muted text-uppercase fw-medium">
                       Date
                     </th>
                     <th className="small text-app-muted text-uppercase fw-medium">
-                      Description
-                    </th>
-                    <th className="small text-app-muted text-uppercase fw-medium d-none d-sm-table-cell">
-                      Category
+                      Description & Category
                     </th>
                     <th className="small text-app-muted text-uppercase fw-medium">
                       Type
@@ -415,56 +424,126 @@ const Overview = () => {
                     <th className="small text-app-muted text-uppercase fw-medium">
                       Amount
                     </th>
+                    {/* Dummy headers to match TransactionList.jsx column count (6) so CSS doesn't break */}
+                    <th className="d-none"></th>
+                    <th className="d-none"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(Array.isArray(recentTransactions)
-                    ? recentTransactions
-                    : []
-                  ).map((item) => (
-                    <tr key={item.id}>
-                      <td className="small">{item.date}</td>
-                      <td>
-                        <p
-                          className="small fw-medium text-app-primary mb-0 text-truncate"
-                          style={{ maxWidth: 180 }}
-                        >
-                          {item.description}
-                        </p>
-                        <p className="x-small text-app-muted mb-0">{item.id}</p>
-                      </td>
-                      <td className="d-none d-sm-table-cell">
-                        <Badge variant="secondary">
-                          {typeof item.category === "object"
-                            ? item.category?.name
-                            : item.category || "N/A"}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge
-                          variant={
-                            item.type === "income" ? "success" : "danger"
-                          }
-                        >
-                          {item.type === "income" ? (
-                            <TrendingUp size={11} />
-                          ) : (
-                            <TrendingDown size={11} />
-                          )}{" "}
-                          {item.type === "income" ? "In" : "Out"}
-                        </Badge>
-                      </td>
-                      <td
-                        className={`fw-semibold small ${item.type === "income" ? "text-success" : "text-danger"}`}
-                      >
-                        {item.type === "income" ? "+" : "-"}$
-                        {item.amount.toLocaleString()}
+                  {paginatedTransactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="text-center py-4 text-muted small">
+                        No transactions found.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    paginatedTransactions.map((item) => (
+                      <tr key={item.id}>
+                        <td className="d-none d-lg-table-cell">
+                          <p className="mb-0 small">
+                            {item.date ? new Date(item.date).toLocaleDateString() : "N/A"}
+                          </p>
+                          <p className="x-small text-app-muted mb-0">TXN-{item.id}</p>
+                        </td>
+                        <td className="d-none d-lg-table-cell">
+                          <p
+                            className="small fw-medium text-app-primary mb-1 text-truncate"
+                            style={{ maxWidth: 200 }}
+                          >
+                            {item.description || "N/A"}
+                          </p>
+                          <Badge variant="secondary">
+                            {typeof item.category === "object"
+                              ? item.category?.name
+                              : item.category || "N/A"}
+                          </Badge>
+                        </td>
+                        <td className="d-none d-lg-table-cell">
+                          <Badge
+                            variant={
+                              item.type === "income" ? "success" : "danger"
+                            }
+                          >
+                            {item.type === "income" ? (
+                              <TrendingUp size={11} className="me-1" />
+                            ) : (
+                              <TrendingDown size={11} className="me-1" />
+                            )}{" "}
+                            {item.type === "income" ? "Income" : "Expense"}
+                          </Badge>
+                        </td>
+                        <td
+                          className={`d-none d-lg-table-cell fw-semibold small ${item.type === "income" ? "text-success" : "text-danger"}`}
+                        >
+                          {item.type === "income" ? "+" : "-"}$
+                          {Number(item.amount).toLocaleString()}
+                        </td>
+
+                        {/* Dummy columns to match TransactionList 6-column layout */}
+                        <td className="d-none d-lg-table-cell"></td>
+                        <td className="d-none d-lg-table-cell"></td>
+
+                        {/* Mobile Card Layout */}
+                        <td className="w-100 d-lg-none p-0 border-0 mobile-card-container">
+                          <div className="mobile-card-grid">
+                            <div className="mobile-card-left">
+                              <h6 className="mobile-name mb-1">
+                                {typeof item.category === "object"
+                                  ? item.category?.name
+                                  : item.category || "N/A"}
+                              </h6>
+                              <div className="mobile-date-text">
+                                {item.date
+                                  ? new Date(item.date).toLocaleDateString()
+                                  : "N/A"}
+                              </div>
+                              <div className="mobile-id-text">TXN-{item.id}</div>
+                              <div className="mobile-account-text mt-2">
+                                <b>Desc:</b> {item.description || "N/A"}
+                              </div>
+                            </div>
+
+                            <div className="mobile-card-right">
+                              <div
+                                className={`mobile-amount ${item.type === "income" ? "text-success" : "text-danger"}`}
+                              >
+                                {item.type === "income" ? "+" : "-"}$
+                                {Number(item.amount).toLocaleString()}
+                              </div>
+                              <div className="mb-2 text-end w-100">
+                                <Badge
+                                  variant={
+                                    item.type === "income" ? "success" : "danger"
+                                  }
+                                >
+                                  {item.type === "income" ? "Income" : "Expense"}
+                                </Badge>
+                              </div>
+
+                              <div className="transaction-actions-mobile justify-content-end">
+                                {/* Dashboard card doesn't need edit/delete buttons, so keep it empty to maintain grid height or add a view arrow */}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Component */}
+            {recentTransactions.length > 0 && (
+              <div className="mt-3">
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={recentTransactions.length}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            )}
           </Card>
         </div>
 

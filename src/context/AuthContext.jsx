@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   apiRequest,
+  AUTH_GOOGLE_LOGIN_ENDPOINT,
   AUTH_LOGIN_ENDPOINT,
   AUTH_REGISTER_ENDPOINT,
   AUTH_VERIFY_OTP_ENDPOINT,
@@ -11,10 +12,9 @@ import {
   AUTH_LOGOUT_ENDPOINT,
   PROFILE_ENDPOINT,
   PROFILE_PASSWORD_ENDPOINT,
-  ADMIN_DASHBOARD_ENDPOINT,
-  USER_DASHBOARD_ENDPOINT,
 } from "../services/api";
 import { ENABLE_AUTH_GUARD } from "../config/featureFlags";
+import { requestForToken, onMessageListener } from "../services/firebase";
 
 const AuthContext = createContext(null);
 
@@ -90,6 +90,21 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const syncFcmToken = async () => {
+    try {
+      const fcmToken = await requestForToken();
+      if (fcmToken) {
+        await apiRequest("/trackfin/profile/fcm-token", {
+          method: "POST",
+          body: JSON.stringify({ fcm_token: fcmToken }),
+        });
+        console.log("FCM Token synced with server successfully.");
+      }
+    } catch (err) {
+      console.warn("Could not sync FCM token:", err);
+    }
+  };
+
   const resolveAuthPayload = (response) => {
     if (!response || typeof response !== "object") {
       return { token: null, user: null };
@@ -162,7 +177,10 @@ const AuthProvider = ({ children }) => {
         }
 
         const userWithRole = await ensureUserRole(meUser);
-        if (isMounted) saveSession(userWithRole, storedToken);
+        if (isMounted) {
+          saveSession(userWithRole, storedToken);
+          syncFcmToken();
+        }
       } catch {
         if (isMounted) clearSession();
       } finally {
@@ -272,12 +290,44 @@ const AuthProvider = ({ children }) => {
 
       const userWithRole = await ensureUserRole(authUser);
       saveSession(userWithRole, resolveAuthPayload(response).token);
+      syncFcmToken();
       toast.success("Welcome back!");
       navigate(
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
       );
     } catch (error) {
       throw normalizeAuthError(error, "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleLogin = async (credential) => {
+    if (!credential) {
+      throw new Error("Google credential is missing.");
+    }
+
+    setLoading(true);
+    try {
+      const response = await apiRequest(AUTH_GOOGLE_LOGIN_ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({ token: credential }),
+      });
+
+      const { user: authUser, token: authToken } = resolveAuthPayload(response);
+      if (!authUser) {
+        throw new Error("Invalid Google login response.");
+      }
+
+      const userWithRole = await ensureUserRole(authUser);
+      saveSession(userWithRole, authToken);
+      syncFcmToken();
+      toast.success("Signed in with Google.");
+      navigate(
+        normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
+      );
+    } catch (error) {
+      throw normalizeAuthError(error, "Google login failed");
     } finally {
       setLoading(false);
     }
@@ -313,6 +363,7 @@ const AuthProvider = ({ children }) => {
 
       const userWithRole = await ensureUserRole(authUser);
       saveSession(userWithRole, resolveAuthPayload(response).token);
+      syncFcmToken();
       toast.success("Account created successfully.");
       navigate(
         normalizeUser(userWithRole)?.role === "admin" ? "/admin" : "/dashboard",
@@ -452,6 +503,7 @@ const AuthProvider = ({ children }) => {
         isInitializing,
         authGuardEnabled,
         login,
+        googleLogin,
         register,
         verifyOtp,
         resendOtp,

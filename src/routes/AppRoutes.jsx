@@ -29,6 +29,8 @@ import SystemSettings from "../pages/admin/SystemSettings";
 import FinancialInsights from "../pages/admin/FinancialInsights";
 import SecurityMonitoring from "../pages/admin/SecurityMonitoring";
 import AdminReports from "../pages/admin/AdminReports";
+import Broadcast from "../pages/admin/Broadcast";
+import Terms from "../pages/legal/Terms";
 import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => (
@@ -112,7 +114,10 @@ const AppRoutes = () => (
       <Route path="security" element={<SecurityMonitoring />} />
       <Route path="settings" element={<SystemSettings />} />
       <Route path="reports" element={<AdminReports />} />
+      <Route path="broadcast" element={<Broadcast />} />
     </Route>
+
+    <Route path="/terms" element={<Terms />} />
 
     <Route path="*" element={<NotFound />} />
   </Routes>

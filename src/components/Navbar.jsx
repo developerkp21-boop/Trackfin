@@ -59,12 +59,12 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
       >
         <div className="offcanvas-header bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center gap-2">
-            <h5
-              className="offcanvas-title fw-bolder text-dark mb-0 fs-5"
+            <h6
+              className="offcanvas-title fw-bolder text-dark mb-0 fs-6"
               id="notificationsOffcanvasLabel"
             >
               Notifications
-            </h5>
+            </h6>
             <span className="badge bg-danger rounded-pill px-2 py-1 fs-8">
               3 New
             </span>
@@ -102,7 +102,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                 </div>
                 <div className="flex-grow-1 min-w-0">
                   <div className="d-flex justify-content-between align-items-center mb-1">
-                    <h6 className="mb-0 text-dark fw-bold fs-6 text-truncate">
+                    <h6 className="mb-0 text-dark fw-bold fs-7 text-truncate">
                       Payment Received
                     </h6>
                     <small
@@ -112,7 +112,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                       10m
                     </small>
                   </div>
-                  <p className="mb-0 small text-secondary lh-sm">
+                  <p className="mb-0 fs-8 text-secondary lh-sm">
                     You received{" "}
                     <span className="fw-bold text-dark">₹15,000</span> for
                     Workspace Rental.
@@ -145,7 +145,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                 </div>
                 <div className="flex-grow-1 min-w-0">
                   <div className="d-flex justify-content-between align-items-center mb-1">
-                    <h6 className="mb-0 text-dark fw-bold fs-6 text-truncate">
+                    <h6 className="mb-0 text-dark fw-bold fs-7 text-truncate">
                       Low Balance Alert
                     </h6>
                     <small
@@ -155,7 +155,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                       2h
                     </small>
                   </div>
-                  <p className="mb-0 small text-secondary lh-sm">
+                  <p className="mb-0 fs-8 text-secondary lh-sm">
                     Main Bank Account balance dropped below threshold.
                   </p>
                 </div>
@@ -182,7 +182,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                 </div>
                 <div className="flex-grow-1 min-w-0">
                   <div className="d-flex justify-content-between align-items-center mb-1">
-                    <h6 className="mb-0 text-dark fw-bold fs-6 text-truncate">
+                    <h6 className="mb-0 text-dark fw-bold fs-7 text-truncate">
                       Weekly Report Ready
                     </h6>
                     <small
@@ -192,7 +192,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                       1d
                     </small>
                   </div>
-                  <p className="mb-0 small text-secondary lh-sm">
+                  <p className="mb-0 fs-8 text-secondary lh-sm">
                     Your financial summary for this week is generated.
                   </p>
                 </div>
@@ -227,7 +227,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                 </div>
                 <div className="flex-grow-1 min-w-0">
                   <div className="d-flex justify-content-between align-items-center mb-1">
-                    <h6 className="mb-0 text-secondary fw-bold fs-6 text-truncate">
+                    <h6 className="mb-0 text-secondary fw-bold fs-7 text-truncate">
                       Profile Updated
                     </h6>
                     <small
@@ -237,7 +237,7 @@ const Navbar = ({ onMenuClick, role = "user" }) => (
                       3d
                     </small>
                   </div>
-                  <p className="mb-0 small text-muted lh-sm">
+                  <p className="mb-0 fs-8 text-muted lh-sm">
                     Your preference settings were successfully updated.
                   </p>
                 </div>

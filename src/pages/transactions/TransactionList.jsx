@@ -14,6 +14,7 @@ import {
   PAYMENT_METHODS_ENDPOINT,
 } from "../../services/api";
 import { toast } from "react-hot-toast";
+import Pagination from "../../components/Pagination";
 import "./TransactionList.css";
 
 const initialForm = {
@@ -41,6 +42,10 @@ const TransactionList = () => {
   const [showModal, setShowModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchData = async () => {
     try {
@@ -105,6 +110,17 @@ const TransactionList = () => {
       return b.date.localeCompare(a.date);
     });
   }, [transactions, search, typeFilter, accountFilter, sortBy]);
+
+  // Handle page resets when filters change
+  useState(() => {
+    setCurrentPage(1);
+  }, [search, typeFilter, accountFilter, sortBy]);
+
+  // Pagination slice
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(startIndex, startIndex + itemsPerPage);
+  }, [filtered, currentPage, itemsPerPage]);
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
@@ -483,7 +499,7 @@ const TransactionList = () => {
                     </td>
                   </tr>
                 ) : (
-                  filtered.map((item) => (
+                  paginatedTransactions.map((item) => (
                     <tr key={item.id}>
                       <td className="d-none d-lg-table-cell">
                         <p className="mb-0">
@@ -598,6 +614,16 @@ const TransactionList = () => {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Component */}
+          <div className="mt-3">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filtered.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </Card>
       </div>
