@@ -36,7 +36,11 @@ const selectStyles = {
     backgroundColor: 'var(--bg-card)',
     border: '1px solid var(--border-subtle)',
     boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
-    zIndex: 20
+    zIndex: 9999
+  }),
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 9999
   }),
   option: (base, state) => ({
     ...base,
@@ -87,6 +91,8 @@ const Select = ({
         isSearchable={isSearchable}
         isClearable={isClearable}
         noOptionsMessage={() => 'No options'}
+        menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+        menuPosition="fixed"
         {...props}
       />
       {helper && !error && <div className="form-text text-muted small">{helper}</div>}

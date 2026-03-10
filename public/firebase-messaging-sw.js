@@ -22,11 +22,15 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    // Customize notification here
-    const notificationTitle = payload.notification.title;
+    // Extract data payload to display customized notification
+    const data = payload.data || {};
+    const notificationTitle = data.title || 'New Message';
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: '/vite.svg'
+        body: data.body || '',
+        icon: data.icon || '/logo-192.png',
+        data: {
+            url: data.click_action || '/dashboard' // Used to open url on click
+        }
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);

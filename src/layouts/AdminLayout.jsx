@@ -37,9 +37,9 @@ const AdminLayout = () => {
         role="admin"
       />
 
-      <div className={`main-content d-flex flex-column ${effectiveCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
+      <div className={`main-content d-flex flex-column ${effectiveCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`} style={{ height: '100dvh', overflow: 'hidden' }}>
         <Navbar onMenuClick={() => setMobileOpen(true)} role="admin" />
-        <main className="p-3 p-sm-4 p-lg-5 flex-grow-1">
+        <main className="p-3 p-sm-4 p-lg-5 flex-grow-1" style={{ overflowY: 'auto' }}>
           <div className="content-container">
             <Outlet />
           </div>
