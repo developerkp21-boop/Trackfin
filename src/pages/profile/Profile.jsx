@@ -21,6 +21,7 @@ import {
   AlertTriangle,
   Download,
   Trash2,
+  Sparkles,
 } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -255,6 +256,18 @@ const Profile = () => {
       .slice(0, 2)
       .toUpperCase() || "TF";
 
+  const profileFields = [
+    profile.name,
+    profile.email,
+    profile.phone,
+    profile.location,
+    profile.website,
+    profile.bio,
+  ];
+  const profileCompletion = Math.round(
+    (profileFields.filter(Boolean).length / profileFields.length) * 100,
+  );
+
   const handleAvatarChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -417,19 +430,21 @@ const Profile = () => {
   ];
 
   return (
-    <div className="d-flex flex-column gap-4">
-      <PageHeader
-        title="My Profile"
-        subtitle="Manage your personal information, security, and preferences."
-      />
+    <div className="profile-page d-flex flex-column gap-4">
+      <div className="profile-page-header">
+        <PageHeader
+          title="My Profile"
+          subtitle="Manage your personal information, security, and preferences."
+        />
+      </div>
 
       {/* Profile Hero Card */}
       <Card className="profile-hero-card">
-        <div className="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-4">
+        <div className="profile-hero-layout d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-4">
           {/* Avatar */}
-          <div className="position-relative flex-shrink-0">
+          <div className="profile-avatar-wrap position-relative flex-shrink-0">
             <div
-              className="rounded-circle d-flex align-items-center justify-content-center overflow-hidden"
+              className="profile-avatar rounded-circle d-flex align-items-center justify-content-center overflow-hidden"
               style={{
                 width: 88,
                 height: 88,
@@ -480,9 +495,13 @@ const Profile = () => {
           </div>
 
           {/* Info */}
-          <div className="flex-grow-1">
-            <div className="d-flex align-items-start justify-content-between flex-wrap gap-2">
-              <div>
+          <div className="profile-hero-main flex-grow-1">
+            <div className="profile-hero-top d-flex align-items-start justify-content-between flex-wrap gap-2">
+              <div className="profile-hero-meta">
+                <p className="profile-overline text-uppercase x-small fw-semibold text-app-muted mb-2 d-inline-flex align-items-center gap-2">
+                  <Sparkles size={12} />
+                  Premium Profile
+                </p>
                 <h2 className="h4 fw-bold text-app-primary mb-1">
                   {profile.name}
                 </h2>
@@ -495,23 +514,63 @@ const Profile = () => {
                     {profile.role === "admin" ? "Administrator" : "User"}
                   </Badge>
                 </div>
+                <div className="profile-quick-meta d-flex align-items-center gap-2 flex-wrap mt-3">
+                  <span className="profile-meta-chip">
+                    <Mail size={12} />
+                    Verified account
+                  </span>
+                  {profile.phone ? (
+                    <span className="profile-meta-chip">
+                      <Phone size={12} />
+                      {profile.phone}
+                    </span>
+                  ) : null}
+                  {profile.location ? (
+                    <span className="profile-meta-chip">
+                      <MapPin size={12} />
+                      {profile.location}
+                    </span>
+                  ) : null}
+                </div>
               </div>
               <Button
                 variant="ghost"
-                className="p-2 text-danger d-flex align-items-center gap-2 small"
+                className="profile-signout-btn p-2 text-danger d-flex align-items-center gap-2 small"
                 onClick={logout}
               >
                 <LogOut size={14} /> Sign Out
               </Button>
             </div>
+
+            <div className="profile-completion-card mt-3">
+              <div className="d-flex align-items-center justify-content-between gap-3 mb-2">
+                <div>
+                  <p className="small fw-semibold text-app-primary mb-0">
+                    Profile completion
+                  </p>
+                  <p className="x-small text-app-muted mb-0">
+                    Complete your details for a polished account setup
+                  </p>
+                </div>
+                <span className="profile-completion-value">
+                  {profileCompletion}%
+                </span>
+              </div>
+              <div className="profile-completion-track">
+                <div
+                  className="profile-completion-bar"
+                  style={{ width: `${profileCompletion}%` }}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Account Stats */}
-          <div className="d-flex gap-2 flex-wrap ms-sm-auto">
+          <div className="profile-stat-grid d-flex gap-2 flex-wrap ms-sm-auto">
             {accountStats.map((stat) => (
               <div
                 key={stat.label}
-                className="text-center px-3 py-2 rounded-3 bg-body-tertiary"
+                className="profile-stat-pill text-center px-3 py-2 rounded-3 bg-body-tertiary"
                 style={{ minWidth: 72 }}
               >
                 <stat.icon
@@ -530,13 +589,13 @@ const Profile = () => {
       </Card>
 
       {/* Tab Navigation */}
-      <div className="d-flex gap-2 flex-wrap mobile-app-tabs pb-1">
+      <div className="profile-tab-strip d-flex gap-2 flex-wrap mobile-app-tabs pb-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`btn btn-sm d-flex align-items-center gap-2 rounded-pill px-3 ${activeTab === tab.id ? "btn-primary" : "btn-outline-secondary"}`}
+            className={`profile-tab-button btn btn-sm d-flex align-items-center gap-2 rounded-pill px-3 ${activeTab === tab.id ? "btn-primary" : "btn-outline-secondary"}`}
           >
             <tab.icon size={14} />
             {tab.label}
@@ -548,7 +607,7 @@ const Profile = () => {
       {activeTab === "personal" && (
         <div className="row g-3 g-lg-4 mobile-edge-cards">
           <div className="col-lg-8">
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h5 fw-semibold text-app-primary mb-4">
                 Personal Information
               </h3>
@@ -644,7 +703,7 @@ const Profile = () => {
 
           {/* Right side — role + danger zone */}
           <div className="col-lg-4 d-flex flex-column gap-3">
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h6 fw-semibold text-app-primary mb-3">
                 Account Role
               </h3>
@@ -687,7 +746,7 @@ const Profile = () => {
               </div>
             </Card>
 
-            <Card className="border-danger-subtle position-relative overflow-hidden">
+            <Card className="profile-section-card border-danger-subtle position-relative overflow-hidden">
               <div className="d-flex align-items-center justify-content-between mb-1">
                 <h3 className="h6 fw-semibold text-danger mb-0">Danger Zone</h3>
                 <Badge variant="warning" className="x-small">
@@ -726,7 +785,7 @@ const Profile = () => {
       {activeTab === "security" && (
         <div className="row g-3 g-lg-4 mobile-edge-cards">
           <div className="col-lg-7">
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h5 fw-semibold text-app-primary mb-4">
                 Change Password
               </h3>
@@ -851,7 +910,7 @@ const Profile = () => {
 
           <div className="col-lg-5 d-flex flex-column gap-3">
             {/* Security tips */}
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h6 fw-semibold text-app-primary mb-3">
                 Security Tips
               </h3>
@@ -892,7 +951,7 @@ const Profile = () => {
             </Card>
 
             {/* Active Sessions */}
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h6 fw-semibold text-app-primary mb-3">
                 Active Sessions
               </h3>
@@ -961,7 +1020,7 @@ const Profile = () => {
       {activeTab === "notifications" && (
         <div className="row g-3 g-lg-4 mobile-edge-cards">
           <div className="col-lg-8">
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h5 fw-semibold text-app-primary mb-4">
                 Notification Preferences
               </h3>
@@ -1041,7 +1100,7 @@ const Profile = () => {
             </Card>
           </div>
           <div className="col-lg-4">
-            <Card>
+            <Card className="profile-section-card">
               <h3 className="h6 fw-semibold text-app-primary mb-3">
                 Quick Summary
               </h3>
@@ -1070,8 +1129,8 @@ const Profile = () => {
       {/* ── Tab: Activity ──────────────────────── */}
       {activeTab === "activity" && (
         <div className="mobile-edge-cards">
-          <Card>
-            <div className="d-flex align-items-center justify-content-between mb-4">
+          <Card className="profile-section-card">
+            <div className="profile-activity-header d-flex align-items-center justify-content-between mb-4">
               <div>
                 <h3 className="h5 fw-semibold text-app-primary mb-0">
                   Account Activity
