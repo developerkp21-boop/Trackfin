@@ -10,6 +10,7 @@ import Badge from '../../components/Badge'
 import Input from '../../components/Input'
 import Select from '../../components/Select'
 import { assetsData, liabilitiesData, netWorthHistory } from '../../data/mockData'
+import './NetWorth.css'
 
 const NetWorth = () => {
   const [assets, setAssets] = useState(assetsData)
@@ -170,7 +171,7 @@ const NetWorth = () => {
           )}
 
           {/* List */}
-          <div className="d-flex flex-column gap-2">
+          <div className="d-none d-md-flex flex-column gap-2">
             {currentList.map((item) => (
               <div key={item.id} className="d-flex align-items-center gap-3 rounded-3 p-2 p-sm-3 bg-body-tertiary">
                 <div className="rounded-3 flex-shrink-0" style={{ width: 10, height: 32, background: categoryColors[item.category] || '#94a3b8', borderRadius: 4 }} />
@@ -184,6 +185,50 @@ const NetWorth = () => {
                 <div className="d-flex gap-1 flex-shrink-0">
                   <Button variant="ghost" className="p-1 text-muted" onClick={() => startEdit(item)}><Pencil size={14} /></Button>
                   <Button variant="ghost" className="p-1 text-danger" onClick={() => setDeleteTarget(item)}><Trash2 size={14} /></Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="d-md-none networth-mobile-grid">
+            {currentList.map((item) => (
+              <div key={item.id} className="networth-mobile-card">
+                <div className="networth-mobile-grid-inner">
+                  <div className="networth-mobile-left min-w-0">
+                    <p className="networth-mobile-name mb-1">{item.name}</p>
+                    <p className="networth-mobile-meta mb-1">{item.id}</p>
+                    <p className="networth-mobile-label mb-0">
+                      Category: <span className="text-capitalize">{item.category}</span>
+                    </p>
+                  </div>
+                  <div className="networth-mobile-right">
+                    <div className="mb-2 text-end w-100">
+                      <Badge variant={activeTab === 'assets' ? 'success' : 'danger'} className="text-capitalize">
+                        {activeTab === 'assets' ? 'asset' : 'liability'}
+                      </Badge>
+                    </div>
+                    <p className={`networth-mobile-value mb-2 ${activeTab === 'assets' ? 'text-success' : 'text-danger'}`}>
+                      ${item.value.toLocaleString()}
+                    </p>
+                    <div className="networth-mobile-actions justify-content-end">
+                      <button
+                        type="button"
+                        className="networth-icon-button"
+                        onClick={() => startEdit(item)}
+                        title="Edit"
+                      >
+                        <Pencil size={12} />
+                      </button>
+                      <button
+                        type="button"
+                        className="networth-icon-button networth-icon-button-delete"
+                        onClick={() => setDeleteTarget(item)}
+                        title="Delete"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

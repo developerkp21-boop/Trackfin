@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   ArrowLeftRight,
   Plus,
@@ -208,12 +208,12 @@ const Accounts = () => {
   };
 
   return (
-    <div className="d-flex flex-column gap-4 pb-5">
+    <div className="accounts-page d-flex flex-column gap-4 pb-5">
       <PageHeader
         title="Account Management"
         subtitle="Manage cash, bank, card, and savings ledgers in one place."
         actions={
-          <div className="d-flex gap-2">
+          <div className="accounts-header-actions d-flex gap-2 flex-wrap">
             <Button
               variant="outline"
               className="d-flex align-items-center gap-2"
@@ -330,8 +330,8 @@ const Accounts = () => {
       </div>
 
       {/* Total Balance */}
-      <Card className="border-0 shadow-sm p-4">
-        <div className="d-flex justify-content-between align-items-center">
+      <Card className="border-0 shadow-sm p-4 account-total-balance-card">
+        <div className="d-flex justify-content-between align-items-center gap-3 flex-wrap">
           <div>
             <p className="small fw-bold text-muted mb-1">
               Total Balance Across All Accounts
@@ -341,7 +341,7 @@ const Accounts = () => {
             </h2>
           </div>
           <div
-            className="rounded-3 d-flex align-items-center justify-content-center shadow-sm"
+            className="rounded-3 d-flex align-items-center justify-content-center shadow-sm flex-shrink-0"
             style={{ width: 56, height: 56, background: "#a8df8e" + "30" }}
           >
             <Wallet size={28} style={{ color: "rgb(128, 197, 112)" }} />
@@ -383,7 +383,7 @@ const Accounts = () => {
                   required
                 />
                 <div className="row g-3">
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <Select
                       label="Account Type"
                       value={form.type}
@@ -402,7 +402,7 @@ const Accounts = () => {
                       ))}
                     </Select>
                   </div>
-                  <div className="col-6">
+                  <div className="col-12 col-sm-6">
                     <label className="form-label small fw-bold text-muted mb-1">
                       Color Label
                     </label>
@@ -629,7 +629,7 @@ const Accounts = () => {
               <strong>{deleteTarget.name}</strong>? This action cannot be
               undone.
             </p>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-column flex-sm-row">
               <Button
                 variant="outline"
                 className="flex-grow-1"

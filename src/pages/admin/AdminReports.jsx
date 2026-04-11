@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Download, FileText, Users, FileBarChart2, Clock } from 'lucide-react'
 import {
   AreaChart,
@@ -13,6 +13,7 @@ import PageHeader from '../../components/PageHeader'
 import Card from '../../components/Card'
 import Badge from '../../components/Badge'
 import Button from '../../components/Button'
+import Pagination from '../../components/Pagination'
 import { adminReportStats, adminRevenueTrend, adminExportHistory, usersData, adminLedgerTransactions } from '../../data/mockData'
 import { exportUsersCSV, exportTransactionsCSV, exportAnalyticsSummary } from '../../services/adminApi'
 import toast from 'react-hot-toast'
@@ -61,6 +62,8 @@ const ExportCard = ({ icon: Icon, title, description, onExport, loading }) => (
 
 const AdminReports = () => {
   const [loadingExport, setLoadingExport] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
 
   const handleExport = async (key, fn) => {
     setLoadingExport(key)
@@ -98,6 +101,11 @@ const AdminReports = () => {
       fn: exportAnalyticsSummary
     }
   ]
+
+  const paginatedExportHistory = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return adminExportHistory.slice(startIndex, startIndex + itemsPerPage)
+  }, [currentPage])
 
   return (
     <div className="d-flex flex-column gap-4">
@@ -179,7 +187,7 @@ const AdminReports = () => {
           <Clock size={16} className="text-app-muted" />
           <p className="fw-semibold text-app-primary mb-0">Recent Exports</p>
         </div>
-        <div className="table-responsive">
+        <div className="d-none d-md-block table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead>
               <tr>
@@ -191,7 +199,7 @@ const AdminReports = () => {
               </tr>
             </thead>
             <tbody>
-              {adminExportHistory.map((item) => (
+              {paginatedExportHistory.map((item) => (
                 <tr key={item.id}>
                   <td className="fw-medium text-app-primary">{item.type}</td>
                   <td className="text-app-secondary">{item.requestedBy}</td>
@@ -204,6 +212,35 @@ const AdminReports = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="d-md-none d-flex flex-column gap-3">
+          {paginatedExportHistory.map((item) => (
+            <div key={item.id} className="rounded-4 border border-app-subtle bg-app-card p-3 shadow-sm">
+              <div className="d-flex align-items-start justify-content-between gap-3 mb-2">
+                <div>
+                  <p className="fw-semibold text-app-primary mb-1">{item.type}</p>
+                  <p className="small text-app-secondary mb-0">{item.requestedBy}</p>
+                </div>
+                <Badge variant="success">{item.status}</Badge>
+              </div>
+              <div className="d-flex justify-content-between small text-app-secondary py-1">
+                <span>File Size</span>
+                <span>{item.size}</span>
+              </div>
+              <div className="d-flex justify-content-between small text-app-secondary py-1">
+                <span>Date & Time</span>
+                <span className="text-end">{item.createdAt}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={adminExportHistory.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </Card>
     </div>

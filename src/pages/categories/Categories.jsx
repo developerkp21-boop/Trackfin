@@ -17,6 +17,7 @@ import Button from "../../components/Button";
 import Badge from "../../components/Badge";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
+import Pagination from "../../components/Pagination";
 import { apiRequest, CATEGORIES_ENDPOINT } from "../../services/api";
 import { toast } from "react-hot-toast";
 import "./Categories.css";
@@ -33,6 +34,8 @@ const Categories = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const fetchCategories = async () => {
     try {
@@ -62,6 +65,14 @@ const Categories = () => {
 
   const incomeCount = categories.filter((c) => c.type === "income").length;
   const expenseCount = categories.filter((c) => c.type === "expense").length;
+  const paginatedCategories = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(startIndex, startIndex + itemsPerPage);
+  }, [filtered, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, searchQuery]);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -329,7 +340,7 @@ const Categories = () => {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((cat) => (
+                {paginatedCategories.map((cat) => (
                   <tr key={cat.id}>
                     <td>
                       <div className="category-info">
@@ -397,7 +408,7 @@ const Categories = () => {
 
           {/* Mobile Card View */}
           <div className="mobile-view categories-mobile-grid">
-            {filtered.map((cat) => (
+            {paginatedCategories.map((cat) => (
               <div
                 key={cat.id}
                 className="category-mobile-card shadow-sm border-0"
@@ -460,6 +471,15 @@ const Categories = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-3">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filtered.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </>
       )}

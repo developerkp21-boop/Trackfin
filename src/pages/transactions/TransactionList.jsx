@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, Pencil, Trash2, Plus } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -6,7 +6,6 @@ import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
-import { transactionsData } from "../../data/mockData";
 import {
   apiRequest,
   TRANSACTIONS_ENDPOINT,
@@ -31,7 +30,6 @@ const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState(initialForm);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -49,7 +47,6 @@ const TransactionList = () => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
       const [txns, cats, pms] = await Promise.all([
         apiRequest(TRANSACTIONS_ENDPOINT),
         apiRequest(CATEGORIES_ENDPOINT),
@@ -79,12 +76,10 @@ const TransactionList = () => {
       setTransactions([]);
       setCategories([]);
       setPaymentMethods([]);
-    } finally {
-      setLoading(false);
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -112,7 +107,7 @@ const TransactionList = () => {
   }, [transactions, search, typeFilter, accountFilter, sortBy]);
 
   // Handle page resets when filters change
-  useState(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [search, typeFilter, accountFilter, sortBy]);
 
@@ -201,7 +196,7 @@ const TransactionList = () => {
       setTransactions((prev) =>
         prev.filter((item) => item.id !== deleteTarget.id),
       );
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete transaction");
     } finally {
       setDeleteTarget(null);
@@ -211,37 +206,30 @@ const TransactionList = () => {
   return (
     <>
       <div className="d-flex flex-column gap-4 transaction-list-wrapper">
-        <div className="d-flex justify-content-between align-items-center">
-          <PageHeader
-            title="Transaction Management"
-            subtitle="Ledger-style transaction capture, filtering, sorting, and controls."
-          />
-        </div>
-        <div className="row px-5">
-          {" "}
-          <Button
-            onClick={() => {
-              resetForm();
-              setShowModal(true);
-            }}
-            className="d-flex align-items-center gap-2"
-            style={{
-              backgroundColor: "#a8df8e",
-              border: "none",
-              color: "#1a1a1a",
-            }}
-          >
-            <Plus size={16} /> Add Transaction
-          </Button>
-        </div>
+        <PageHeader
+          title="Transaction Management"
+          subtitle="Ledger-style transaction capture, filtering, sorting, and controls."
+          actions={
+            <Button
+              onClick={() => {
+                resetForm();
+                setShowModal(true);
+              }}
+              className="transaction-primary-action"
+              style={{
+                backgroundColor: "#a8df8e",
+                border: "none",
+                color: "#1a1a1a",
+              }}
+            >
+              <Plus size={16} /> Add Transaction
+            </Button>
+          }
+        />
         {/* Transaction Form Modal */}
         {showModal && (
           <div className="modal-backdrop" onClick={() => setShowModal(false)}>
-            <div
-              className="modal-content-wrapper"
-              style={{ maxWidth: "800px" }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="modal-content-wrapper transaction-modal" onClick={(e) => e.stopPropagation()}>
               <Card className="border-0 shadow-lg p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <h3 className="h5 fw-bold mb-0">
@@ -378,7 +366,7 @@ const TransactionList = () => {
           </div>
         )}
 
-        <Card>
+        <Card className="transaction-surface-card">
           <div className="row g-2 g-md-3 align-items-end mb-3">
             <div className="col-12 col-md-4">
               <label className="form-label fw-medium text-secondary small d-none d-md-block">
@@ -468,7 +456,7 @@ const TransactionList = () => {
             </div>
           </div>
 
-          <div className="table-responsive">
+          <div className="table-responsive transaction-table-wrap">
             <table className="table table-hover align-middle mb-0 transaction-table">
               <thead className="bg-light d-none d-lg-table-header-group">
                 <tr>
@@ -633,13 +621,13 @@ const TransactionList = () => {
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3"
           style={{ background: "rgba(15, 23, 42, 0.45)", zIndex: 1050 }}
         >
-          <Card className="w-100" style={{ maxWidth: "26rem" }}>
+          <Card className="w-100 transaction-delete-card" style={{ maxWidth: "26rem" }}>
             <h5 className="mb-2 text-app-primary">Delete Transaction</h5>
             <p className="text-app-secondary mb-4 small">
               Are you sure you want to delete transaction{" "}
               <strong>{deleteTarget.id}</strong>?
             </p>
-            <div className="d-flex justify-content-end gap-2">
+            <div className="d-flex justify-content-end gap-2 flex-column flex-sm-row">
               <Button variant="outline" onClick={() => setDeleteTarget(null)}>
                 Cancel
               </Button>

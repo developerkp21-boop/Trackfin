@@ -145,9 +145,8 @@
   }
 
   .mobile-email {
-    font-size: 0.8rem !important;
+    font-size: 0.7rem !important;
     color: #4a5568 !important;
-    word-break: break-all;
     margin-bottom: 0.1rem !important;
   }
 
@@ -206,6 +205,13 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .mobile-card-right .mb-2.text-end.w-100 {
+    margin-bottom: 0.65rem !important;
+    text-align: right !important;
   }
 }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   PieChart,
   Pie,
@@ -16,6 +16,7 @@ import { TrendingDown, TrendingUp, CreditCard, ShoppingCart } from 'lucide-react
 import PageHeader from '../../components/PageHeader'
 import Card from '../../components/Card'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
 import { adminInsights, adminHighRiskUsers } from '../../data/mockData'
 
 // ─────────────────────────────────────────────
@@ -61,10 +62,20 @@ const CustomPieLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, n
 
 const FinancialInsights = () => {
   const [filter, setFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
 
   const filteredRiskUsers = filter === 'all'
     ? adminHighRiskUsers
     : adminHighRiskUsers.filter((u) => u.risk === filter)
+  const paginatedRiskUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredRiskUsers.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredRiskUsers, currentPage])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filter])
 
   const metrics = [
     {
@@ -193,7 +204,7 @@ const FinancialInsights = () => {
             <p className="fw-semibold text-app-primary mb-0">High-Risk Users</p>
             <p className="small text-app-secondary mb-0">Users with low financial health scores</p>
           </div>
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-2 flex-wrap">
             {['all', 'critical', 'high', 'medium'].map((level) => (
               <button
                 key={level}
@@ -207,7 +218,7 @@ const FinancialInsights = () => {
           </div>
         </div>
 
-        <div className="table-responsive">
+        <div className="d-none d-md-block table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead>
               <tr>
@@ -220,7 +231,7 @@ const FinancialInsights = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRiskUsers.map((u) => (
+              {paginatedRiskUsers.map((u) => (
                 <tr key={u.id}>
                   <td className="fw-semibold text-app-primary">{u.name}</td>
                   <td className="text-app-secondary">{u.email}</td>
@@ -261,6 +272,41 @@ const FinancialInsights = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="d-md-none d-flex flex-column gap-3">
+          {paginatedRiskUsers.map((u) => (
+            <div key={u.id} className="rounded-4 border border-app-subtle bg-app-card p-3 shadow-sm">
+              <div className="d-flex align-items-start justify-content-between gap-3 mb-2">
+                <div>
+                  <p className="fw-semibold text-app-primary mb-1">{u.name}</p>
+                  <p className="small text-app-secondary mb-0">{u.email}</p>
+                </div>
+                <Badge variant={riskVariant[u.risk]}>{u.risk}</Badge>
+              </div>
+              <div className="d-flex justify-content-between small py-1">
+                <span className="text-app-muted">Health Score</span>
+                <span className="fw-semibold text-app-primary">{u.healthScore}</span>
+              </div>
+              <div className="d-flex justify-content-between small py-1">
+                <span className="text-app-muted">Debt Ratio</span>
+                <span className={u.debtRatio > 60 ? 'text-danger fw-semibold' : u.debtRatio > 45 ? 'text-warning fw-semibold' : 'text-success fw-semibold'}>
+                  {u.debtRatio}%
+                </span>
+              </div>
+              <div className="d-flex justify-content-between small py-1">
+                <span className="text-app-muted">Status</span>
+                <Badge variant={u.status === 'active' ? 'success' : 'warning'}>{u.status}</Badge>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredRiskUsers.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </Card>
     </div>

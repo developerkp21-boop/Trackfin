@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Send, Mail, Smartphone, RadioTower, Users, Info, History, Calendar, CheckCircle2, Loader2, Search, User } from "lucide-react";
+import PageHeader from "../../components/PageHeader";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
@@ -128,17 +129,21 @@ const Broadcast = () => {
 
     return (
         <div style={{ paddingBottom: "5rem" }}>
-            {/* ── Page Header ── */}
-            <div className="px-1 mb-4">
-                <div className="d-flex align-items-center gap-2 mb-1">
-                    <RadioTower size={22} className="text-success" />
-                    <h2 className="mb-0 fw-bold font-display fs-4">Broadcaster</h2>
-                </div>
-                <p className="text-app-secondary mb-0 small">Send announcements via Email & Push Notifications.</p>
+            <div className="mb-4">
+                <PageHeader
+                    title="Broadcaster"
+                    subtitle="Send announcements via Email and Push Notifications."
+                    actions={
+                        <div className="d-none d-md-inline-flex align-items-center gap-2 text-success">
+                            <RadioTower size={18} />
+                            <span className="small fw-semibold">Admin Communications</span>
+                        </div>
+                    }
+                />
             </div>
 
             {/* ── Desktop Tab Bar (hidden on mobile) ── */}
-            <div className="d-none d-md-flex gap-2 mb-4 bg-light p-1 rounded-4 shadow-sm border border-app-subtle w-fit">
+            <div className="d-none d-md-inline-flex gap-2 mb-4 bg-light p-1 rounded-4 shadow-sm border border-app-subtle">
                 {TABS.map((tab) => (
                     <button
                         key={tab.id}

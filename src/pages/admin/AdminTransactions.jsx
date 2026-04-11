@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowDownUp, Search, SlidersHorizontal, X, TrendingUp, TrendingDown, Calendar, Hash } from "lucide-react";
+import PageHeader from "../../components/PageHeader";
 import Select from "../../components/Select";
+import Pagination from "../../components/Pagination";
 import { adminLedgerTransactions } from "../../data/mockData";
 
 const statusStyle = {
@@ -15,6 +17,8 @@ const AdminTransactions = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date_desc");
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filtered = useMemo(() => {
     const searched = adminLedgerTransactions.filter((item) => {
@@ -37,14 +41,21 @@ const AdminTransactions = () => {
   }, [search, typeFilter, statusFilter, sortBy]);
 
   const activeFilterCount = (typeFilter !== "all" ? 1 : 0) + (statusFilter !== "all" ? 1 : 0);
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(startIndex, startIndex + itemsPerPage);
+  }, [filtered, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, typeFilter, statusFilter, sortBy]);
 
   return (
     <div className="d-flex flex-column gap-3">
-      {/* ── Page Header ── */}
-      <div>
-        <h2 className="fw-bold font-display fs-4 mb-1">Transactions</h2>
-        <p className="text-app-secondary small mb-0">Track, review, and control all income and expense entries.</p>
-      </div>
+      <PageHeader
+        title="Transactions"
+        subtitle="Track, review, and control all income and expense entries."
+      />
 
       {/* ── Search + Filter Bar ── */}
       <div className="card border-0 shadow-sm rounded-4">
@@ -77,15 +88,15 @@ const AdminTransactions = () => {
           </button>
 
           {/* Desktop filters inline */}
-          <div className="d-none d-md-flex align-items-center gap-2">
-            <div style={{ minWidth: 130 }}>
+          <div className="d-none d-md-flex admin-filter-group">
+            <div className="admin-filter-field is-type">
               <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} wrapperClassName="mb-0" isSearchable={false}>
                 <option value="all">All Types</option>
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
               </Select>
             </div>
-            <div style={{ minWidth: 130 }}>
+            <div className="admin-filter-field is-status">
               <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} wrapperClassName="mb-0" isSearchable={false}>
                 <option value="all">All Status</option>
                 <option value="posted">Posted</option>
@@ -93,7 +104,7 @@ const AdminTransactions = () => {
                 <option value="failed">Failed</option>
               </Select>
             </div>
-            <div style={{ minWidth: 155 }}>
+            <div className="admin-filter-field is-sort">
               <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} wrapperClassName="mb-0" isSearchable={false}>
                 <option value="date_desc">Latest First</option>
                 <option value="date_asc">Oldest First</option>
@@ -157,14 +168,14 @@ const AdminTransactions = () => {
           {filtered.length === 0 ? (
             <div className="py-5 text-center text-app-muted small">No records found.</div>
           ) : (
-            filtered.map((item, idx) => {
+            paginatedTransactions.map((item, idx) => {
               const isIncome = item.type === "income";
               const st = statusStyle[item.status] || statusStyle.pending;
               const catName = typeof item.category === "object" ? item.category?.name : item.category || "N/A";
               return (
                 <div
                   key={item.id}
-                  className={`px-3 py-3 d-flex align-items-center gap-3 ${idx < filtered.length - 1 ? "border-bottom border-app-subtle" : ""}`}
+                  className={`px-3 py-3 d-flex align-items-center gap-3 ${idx < paginatedTransactions.length - 1 ? "border-bottom border-app-subtle" : ""}`}
                 >
                   {/* Type Icon */}
                   <div
@@ -232,7 +243,7 @@ const AdminTransactions = () => {
                   <td colSpan="6" className="text-center py-5 text-app-muted small">No records found.</td>
                 </tr>
               ) : (
-                filtered.map((item) => {
+                paginatedTransactions.map((item) => {
                   const isIncome = item.type === "income";
                   const st = statusStyle[item.status] || statusStyle.pending;
                   const catName = typeof item.category === "object" ? item.category?.name : item.category || "N/A";
@@ -270,6 +281,14 @@ const AdminTransactions = () => {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="p-3 pt-0">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filtered.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </div>

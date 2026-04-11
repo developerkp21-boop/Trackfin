@@ -125,3 +125,5 @@ export const ADMIN_FAILED_LOGINS_ENDPOINT =
   "/trackfin/admin/security/failed-logins";
 export const ADMIN_SUSPICIOUS_ENDPOINT = "/trackfin/admin/security/suspicious";
 export const ADMIN_USERS_ENDPOINT = "/trackfin/admin/users";
+export const INSIGHTS_ENDPOINT = "/trackfin/insights";
+export const INSIGHTS_REFRESH_ENDPOINT = "/trackfin/insights/refresh";

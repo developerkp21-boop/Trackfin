@@ -1,3 +1,19 @@
+.transaction-modal {
+  max-width: 800px;
+}
+
+.transaction-delete-card {
+  max-width: 26rem;
+}
+
+.transaction-primary-action {
+  min-width: min(100%, 12rem);
+}
+
+.transaction-delete-actions .btn {
+  width: 100%;
+}
+
 @media (max-width: 991.98px) {
   .transaction-list-wrapper .table-responsive {
     overflow: visible !important;
@@ -39,7 +55,7 @@
   .mobile-card-grid {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 0.5rem;
+    gap: 0.75rem;
     width: 100%;
   }
 
@@ -53,7 +69,8 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    padding-left: 0.5rem;
+    padding-left: 0.25rem;
+    min-width: 5.75rem;
   }
 
   .mobile-name {
@@ -159,6 +176,54 @@
 
   .filter-badge.active {
     display: block;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .transaction-surface-card {
+    padding: 1rem !important;
+  }
+
+  .transaction-table tbody tr {
+    padding: 0.9rem !important;
+    border-radius: 1.1rem !important;
+  }
+
+  .mobile-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mobile-card-right {
+    align-items: flex-start;
+    padding-left: 0;
+  }
+
+  .mobile-card-right .badge,
+  .mobile-card-right .transaction-actions-mobile {
+    align-self: stretch;
+  }
+
+  .mobile-card-right .mb-2.text-end.w-100 {
+    margin-bottom: 0.65rem !important;
+    text-align: left !important;
+  }
+
+  .mobile-amount {
+    text-align: left;
+  }
+
+  .transaction-actions-mobile {
+    justify-content: flex-start !important;
+  }
+
+  .transaction-delete-card .btn {
+    width: 100%;
+  }
+}
+
+@media (min-width: 576px) {
+  .transaction-delete-card .btn {
+    width: auto;
   }
 }
 

@@ -1,0 +1,131 @@
+.networth-mobile-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.networth-mobile-card {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid #eef2f6;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.networth-mobile-grid-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: start;
+  width: 100%;
+}
+
+.networth-mobile-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.networth-mobile-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-left: 0.5rem;
+  min-width: 5.75rem;
+}
+
+.networth-mobile-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1.25;
+}
+
+.networth-mobile-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  word-break: break-word;
+}
+
+.networth-mobile-label {
+  font-size: 0.8rem;
+  color: #4a5568;
+}
+
+.networth-mobile-label span {
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.networth-mobile-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: right;
+  width: 100%;
+  margin-bottom: 0.4rem;
+}
+
+.networth-mobile-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.networth-icon-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.networth-icon-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.networth-icon-button:hover {
+  border-color: var(--bs-primary);
+  color: var(--bs-primary);
+}
+
+.networth-icon-button-delete {
+  border-color: #fecaca;
+  color: #ef4444;
+}
+
+.networth-icon-button-delete:hover {
+  background: #fff5f5;
+}
+
+@media (max-width: 767.98px) {
+  .networth-mobile-right .mb-2.text-end.w-100 {
+    margin-bottom: 0.65rem !important;
+    text-align: right !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .networth-mobile-grid-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .networth-mobile-right {
+    align-items: flex-start;
+    padding-left: 0;
+    min-width: 0;
+  }
+
+  .networth-mobile-value {
+    text-align: left;
+  }
+
+  .networth-mobile-actions {
+    justify-content: flex-start !important;
+  }
+}

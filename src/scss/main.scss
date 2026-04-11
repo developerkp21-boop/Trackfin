@@ -222,10 +222,45 @@ body.dark .input-field:focus {
   transition: padding-left 0.3s ease;
 }
 
+.app-main-frame {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app-main-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
 .content-container {
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+}
+
+.app-card {
+  width: 100%;
+}
+
+.page-header {
+  row-gap: 1rem;
+}
+
+.page-header-copy {
+  flex: 1 1 auto;
+}
+
+.page-header-copy p {
+  max-width: 46rem;
+}
+
+.page-header-actions {
+  flex-shrink: 0;
+}
+
+.page-header-actions > * {
+  max-width: 100%;
 }
 
 @media (min-width: 992px) {
@@ -285,6 +320,42 @@ body.dark .input-field:focus {
   .app-navbar {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .app-main-scroll {
+    scroll-padding-top: 1rem;
+  }
+
+  .app-card {
+    padding: 1rem !important;
+    border-radius: 1.25rem !important;
+  }
+
+  .page-header-copy h1 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+  }
+
+  .page-header-copy p {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    align-items: stretch !important;
+  }
+
+  .page-header-actions > * {
+    width: 100%;
+  }
+
+  .page-header-actions .btn,
+  .page-header-actions button {
+    min-height: 2.75rem;
+    justify-content: center;
   }
 }
 
@@ -454,6 +525,90 @@ body.dark .input-field:focus {
     padding: 1rem;
   }
   .btn-mobile-block {
+    width: 100%;
+  }
+}
+
+.budget-category-table input.form-control {
+  min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+  .budget-category-table thead {
+    display: none;
+  }
+
+  .budget-category-table,
+  .budget-category-table tbody,
+  .budget-category-table tr,
+  .budget-category-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .budget-category-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .budget-category-table tr {
+    border: 1px solid var(--border-subtle);
+    border-radius: 1rem;
+    padding: 0.95rem;
+    background: var(--bg-card);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  .budget-category-table td {
+    border: 0 !important;
+    padding: 0.35rem 0;
+  }
+
+  .budget-category-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .budget-category-table td[data-label="Progress"] {
+    min-width: 0 !important;
+  }
+
+  .budget-category-table td[data-label="Budget"] input.form-control {
+    width: 100% !important;
+  }
+}
+
+.admin-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-filter-field {
+  min-width: 0;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .admin-filter-field.is-type,
+  .admin-filter-field.is-status {
+    width: 8.25rem;
+  }
+
+  .admin-filter-field.is-sort {
+    width: 10rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .admin-filter-group {
     width: 100%;
   }
 }

@@ -1,5 +1,5 @@
 const baseClasses =
-  'd-inline-flex align-items-center justify-content-center gap-2 rounded-3 px-3 py-2 btn text-nowrap transition-smooth'
+  'd-inline-flex align-items-center justify-content-center gap-2 rounded-3 px-3 py-2 btn text-wrap fw-semibold transition-smooth'
 
 const variants = {
   primary: 'btn-primary text-dark shadow-sm',

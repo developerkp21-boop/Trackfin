@@ -5,6 +5,10 @@
   transition: all 0.3s ease;
 }
 
+.accounts-header-actions {
+  width: 100%;
+}
+
 .account-card-overlay {
   position: absolute;
   top: 0;
@@ -117,4 +121,63 @@
 .modal-content-wrapper::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+}
+
+@media (min-width: 768px) {
+  .accounts-header-actions {
+    width: auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .accounts-page .account-card-container .glass-card {
+    min-height: 12.5rem;
+  }
+
+  .accounts-page .account-card-container .glass-card > div {
+    flex-direction: column;
+  }
+
+  .accounts-page .account-card-container .glass-card > div > div:first-child {
+    padding: 1rem !important;
+  }
+
+  .accounts-page .account-card-container .glass-card > div > div:last-child {
+    width: 100% !important;
+    height: 0.4rem;
+    border-radius: 0 0 1rem 1rem !important;
+  }
+
+  .account-card-overlay {
+
+    align-items: flex-end;
+    justify-content: stretch;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0),
+      rgba(15, 23, 42, 0.5)
+    );
+    backdrop-filter: blur(3px);
+  }
+
+  .hover-action-btn {
+    width: auto;
+    flex: 1 1 0;
+    border-radius: 0.85rem;
+    min-height: 2.75rem;
+  }
+
+  .account-total-balance-card {
+    text-align: left;
+  }
+
+  .account-total-balance-card > div {
+    align-items: flex-start !important;
+  }
+
+  .modal-content-wrapper {
+    max-height: min(90vh, 42rem);
+  }
 }

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AlertTriangle, Monitor, ShieldAlert, X } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
 import Badge from "../../components/Badge";
 import Button from "../../components/Button";
+import Pagination from "../../components/Pagination";
 import {
   apiRequest,
   ADMIN_SESSIONS_ENDPOINT,
@@ -41,6 +42,10 @@ const SecurityMonitoring = () => {
   const [suspiciousLogins, setSuspiciousLogins] = useState([]);
   const [revokeTarget, setRevokeTarget] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [failedPage, setFailedPage] = useState(1);
+  const [suspiciousPage, setSuspiciousPage] = useState(1);
+  const [sessionPage, setSessionPage] = useState(1);
+  const itemsPerPage = 5;
 
   const fetchData = async () => {
     try {
@@ -85,6 +90,18 @@ const SecurityMonitoring = () => {
 
   const severityVariant = { high: "danger", medium: "warning", low: "info" };
   const loginStatusVariant = { blocked: "danger", warned: "warning" };
+  const paginatedFailedLogins = useMemo(() => {
+    const startIndex = (failedPage - 1) * itemsPerPage;
+    return failedLogins.slice(startIndex, startIndex + itemsPerPage);
+  }, [failedLogins, failedPage]);
+  const paginatedSuspiciousLogins = useMemo(() => {
+    const startIndex = (suspiciousPage - 1) * itemsPerPage;
+    return suspiciousLogins.slice(startIndex, startIndex + itemsPerPage);
+  }, [suspiciousLogins, suspiciousPage]);
+  const paginatedSessions = useMemo(() => {
+    const startIndex = (sessionPage - 1) * itemsPerPage;
+    return sessions.slice(startIndex, startIndex + itemsPerPage);
+  }, [sessions, sessionPage]);
 
   return (
     <>
@@ -102,7 +119,7 @@ const SecurityMonitoring = () => {
             sub="Accounts with repeated authentication failures"
             iconColor="#e77a8c"
           />
-          <div className="table-responsive">
+          <div className="d-none d-md-block table-responsive">
             <table className="table table-hover align-middle mb-0">
               <thead>
                 <tr>
@@ -124,7 +141,7 @@ const SecurityMonitoring = () => {
                 </tr>
               </thead>
               <tbody>
-                {failedLogins.map((item) => (
+                {paginatedFailedLogins.map((item) => (
                   <tr key={item.id}>
                     <td className="fw-medium text-app-primary">{item.user}</td>
                     <td className="font-monospace small text-app-secondary">
@@ -150,6 +167,35 @@ const SecurityMonitoring = () => {
               </tbody>
             </table>
           </div>
+          <div className="d-md-none d-flex flex-column gap-3">
+            {paginatedFailedLogins.map((item) => (
+              <div key={item.id} className="rounded-4 border border-app-subtle bg-app-card p-3 shadow-sm">
+                <div className="d-flex align-items-start justify-content-between gap-3 mb-2">
+                  <div>
+                    <p className="fw-semibold text-app-primary mb-1">{item.user}</p>
+                    <p className="small font-monospace text-app-secondary mb-0">{item.ip}</p>
+                  </div>
+                  <Badge variant={loginStatusVariant[item.status]}>{item.status}</Badge>
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">Attempts</span>
+                  <span className={`fw-bold ${item.attempts >= 7 ? "text-danger" : item.attempts >= 4 ? "text-warning" : "text-success"}`}>{item.attempts}x</span>
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">Last Attempt</span>
+                  <span className="text-app-secondary text-end">{item.lastAttempt}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Pagination
+              currentPage={failedPage}
+              totalItems={failedLogins.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setFailedPage}
+            />
+          </div>
         </Card>
 
         {/* ─── Suspicious Activity Log ─── */}
@@ -160,7 +206,7 @@ const SecurityMonitoring = () => {
             sub="Flagged actions requiring admin review"
             iconColor="#e8b25e"
           />
-          <div className="table-responsive">
+          <div className="d-none d-md-block table-responsive">
             <table className="table table-hover align-middle mb-0">
               <thead>
                 <tr>
@@ -180,7 +226,7 @@ const SecurityMonitoring = () => {
                 </tr>
               </thead>
               <tbody>
-                {suspiciousLogins.map((item) => (
+                {paginatedSuspiciousLogins.map((item) => (
                   <tr key={item.id}>
                     <td className="fw-semibold text-app-primary">
                       {item.user}
@@ -202,6 +248,35 @@ const SecurityMonitoring = () => {
               </tbody>
             </table>
           </div>
+          <div className="d-md-none d-flex flex-column gap-3">
+            {paginatedSuspiciousLogins.map((item) => (
+              <div key={item.id} className="rounded-4 border border-app-subtle bg-app-card p-3 shadow-sm">
+                <div className="d-flex align-items-start justify-content-between gap-3 mb-2">
+                  <div>
+                    <p className="fw-semibold text-app-primary mb-1">{item.user}</p>
+                    <p className="small text-app-secondary mb-0">{item.action}</p>
+                  </div>
+                  <Badge variant={severityVariant[item.severity]}>{item.severity}</Badge>
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">IP Address</span>
+                  <span className="font-monospace text-app-secondary">{item.ip}</span>
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">Timestamp</span>
+                  <span className="text-app-secondary text-end">{item.timestamp}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Pagination
+              currentPage={suspiciousPage}
+              totalItems={suspiciousLogins.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setSuspiciousPage}
+            />
+          </div>
         </Card>
 
         {/* ─── Device / Session Monitor ─── */}
@@ -212,7 +287,7 @@ const SecurityMonitoring = () => {
             sub="Manage live user sessions and revoke suspicious tokens"
             iconColor="#60a5fa"
           />
-          <div className="table-responsive">
+          <div className="d-none d-md-block table-responsive">
             <table className="table table-hover align-middle mb-0">
               <thead>
                 <tr>
@@ -235,7 +310,7 @@ const SecurityMonitoring = () => {
                 </tr>
               </thead>
               <tbody>
-                {sessions.map((s) => (
+                {paginatedSessions.map((s) => (
                   <tr key={s.id}>
                     <td className="fw-semibold text-app-primary">
                       <div className="d-flex align-items-center gap-2">
@@ -269,6 +344,46 @@ const SecurityMonitoring = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="d-md-none d-flex flex-column gap-3">
+            {paginatedSessions.map((s) => (
+              <div key={s.id} className="rounded-4 border border-app-subtle bg-app-card p-3 shadow-sm">
+                <div className="d-flex align-items-start justify-content-between gap-3 mb-2">
+                  <div>
+                    <p className="fw-semibold text-app-primary mb-1">{s.user}</p>
+                    <p className="small text-app-secondary mb-0">{s.device}</p>
+                  </div>
+                  {s.current ? <Badge variant="success">current</Badge> : null}
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">IP Address</span>
+                  <span className="font-monospace text-app-secondary">{s.ip}</span>
+                </div>
+                <div className="d-flex justify-content-between small py-1">
+                  <span className="text-app-muted">Location</span>
+                  <span className="text-app-secondary text-end">{s.location}</span>
+                </div>
+                <div className="d-flex justify-content-between small py-1 mb-3">
+                  <span className="text-app-muted">Last Seen</span>
+                  <span className="text-app-secondary text-end">{s.lastSeen}</span>
+                </div>
+                {!s.current ? (
+                  <Button variant="danger" className="w-100" onClick={() => setRevokeTarget(s)}>
+                    Revoke Session
+                  </Button>
+                ) : (
+                  <p className="small text-app-muted fst-italic mb-0">Active session</p>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Pagination
+              currentPage={sessionPage}
+              totalItems={sessions.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setSessionPage}
+            />
           </div>
         </Card>
       </div>

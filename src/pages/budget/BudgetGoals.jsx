@@ -16,6 +16,7 @@ import Card from "../../components/Card";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
+import Pagination from "../../components/Pagination";
 import { apiRequest, BUDGETS_ENDPOINT } from "../../services/api";
 import toast from "react-hot-toast";
 
@@ -24,28 +25,49 @@ const BudgetGoals = () => {
   const [spent, setSpent] = useState(0);
   const [catBudgets, setCatBudgets] = useState([]);
   const [alerts, setAlerts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const syncBudgetState = (data) => {
+    const { summary, budgets } = data;
+    setBudget(summary.monthlyBudget || 0);
+    setSpent(summary.spent || 0);
+    setAlerts(summary.alerts || []);
+    setCatBudgets(budgets || []);
+  };
 
   const fetchBudgetData = async () => {
     try {
-      setLoading(true);
       const response = await apiRequest(BUDGETS_ENDPOINT);
       if (response && response.success) {
-        const { summary, budgets } = response.data;
-        setBudget(summary.monthlyBudget || 0);
-        setSpent(summary.spent || 0);
-        setAlerts(summary.alerts || []);
-        setCatBudgets(budgets || []);
+        syncBudgetState(response.data);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to load budget data");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBudgetData();
+    let ignore = false;
+
+    const loadBudgetData = async () => {
+      try {
+        const response = await apiRequest(BUDGETS_ENDPOINT);
+        if (!ignore && response && response.success) {
+          syncBudgetState(response.data);
+        }
+      } catch {
+        if (!ignore) {
+          toast.error("Failed to load budget data");
+        }
+      }
+    };
+
+    loadBudgetData();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const usage = useMemo(
@@ -75,13 +97,22 @@ const BudgetGoals = () => {
         toast.success("Budget updated");
         fetchBudgetData();
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update budget");
     }
   };
 
+  const paginatedBudgets = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return catBudgets.slice(startIndex, startIndex + itemsPerPage);
+  }, [catBudgets, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [catBudgets.length]);
+
   return (
-    <div className="d-flex flex-column gap-4">
+    <div className="budget-page d-flex flex-column gap-4">
       <PageHeader
         title="Budget & Goals"
         subtitle="Set monthly budgets, track limits, and monitor spending alerts."
@@ -274,7 +305,7 @@ const BudgetGoals = () => {
           Category Budget Settings
         </p>
         <div className="table-responsive">
-          <table className="table align-middle mb-0">
+          <table className="table align-middle mb-0 budget-category-table">
             <thead>
               <tr>
                 <th className="small text-app-muted text-uppercase fw-medium">
@@ -295,16 +326,16 @@ const BudgetGoals = () => {
               </tr>
             </thead>
             <tbody>
-              {catBudgets.map((c) => {
+              {paginatedBudgets.map((c) => {
                 const pct = c.amount
                   ? Math.min(100, Math.round((c.spent / c.amount) * 100))
                   : 0;
                 return (
                   <tr key={c.id}>
-                    <td className="fw-medium text-app-primary">
+                    <td className="fw-medium text-app-primary" data-label="Category">
                       {c.category_name}
                     </td>
-                    <td>
+                    <td data-label="Budget">
                       <input
                         type="number"
                         className="form-control form-control-sm rounded-3"
@@ -315,10 +346,10 @@ const BudgetGoals = () => {
                         }
                       />
                     </td>
-                    <td className="text-danger fw-medium">
+                    <td className="text-danger fw-medium" data-label="Spent">
                       ${c.spent.toLocaleString()}
                     </td>
-                    <td>
+                    <td data-label="Status">
                       {pct > 85 ? (
                         <Badge variant="danger">Over Budget</Badge>
                       ) : pct > 70 ? (
@@ -327,7 +358,7 @@ const BudgetGoals = () => {
                         <Badge variant="success">On Track</Badge>
                       )}
                     </td>
-                    <td style={{ minWidth: 120 }}>
+                    <td data-label="Progress" style={{ minWidth: 120 }}>
                       <div className="d-flex align-items-center gap-2">
                         <div
                           className="progress flex-grow-1"
@@ -354,6 +385,14 @@ const BudgetGoals = () => {
               })}
             </tbody>
           </table>
+        </div>
+        <div className="mt-3">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={catBudgets.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </Card>
     </div>

@@ -14,6 +14,7 @@ import Card from "../../components/Card";
 import Badge from "../../components/Badge";
 import Button from "../../components/Button";
 import Select from "../../components/Select";
+import Pagination from "../../components/Pagination";
 import {
   getUserList,
   suspendUser,
@@ -473,6 +474,14 @@ const ManageUsers = () => {
                 )}
               </tbody>
             </table>
+          </div>
+          <div className="mt-3">
+            <Pagination
+              currentPage={currentPage}
+              totalItems={total}
+              itemsPerPage={10}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </Card>
       </div>

@@ -608,9 +608,10 @@ const UserDetails = () => {
             {totalPages > 1 && (
               <div className="mt-2">
                 <Pagination
-                  page={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(p) => setCurrentPage(p)}
+                  currentPage={currentPage}
+                  totalItems={totalTxs}
+                  itemsPerPage={10}
+                  onPageChange={setCurrentPage}
                 />
               </div>
             )}

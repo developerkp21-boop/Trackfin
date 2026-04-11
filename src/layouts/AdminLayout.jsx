@@ -20,7 +20,6 @@ const AdminLayout = () => {
       }
     }
 
-    setIsDesktop(mediaQuery.matches)
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
@@ -37,9 +36,11 @@ const AdminLayout = () => {
         role="admin"
       />
 
-      <div className={`main-content d-flex flex-column ${effectiveCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`} style={{ height: '100dvh', overflow: 'hidden' }}>
+      <div
+        className={`main-content app-main-frame d-flex flex-column ${effectiveCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}
+      >
         <Navbar onMenuClick={() => setMobileOpen(true)} role="admin" />
-        <main className="p-3 p-sm-4 p-lg-5 flex-grow-1" style={{ overflowY: 'auto' }}>
+        <main className="app-main-scroll p-3 p-sm-4 p-lg-5 flex-grow-1">
           <div className="content-container">
             <Outlet />
           </div>
