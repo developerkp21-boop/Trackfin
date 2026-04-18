@@ -57,9 +57,15 @@ const TransactionList = () => {
       setPaymentMethods(pms || []);
 
       // Select first options by default if form is empty
-      if (!editingId && Array.isArray(cats) && cats.length > 0 && Array.isArray(pms) && pms.length > 0) {
+      if (
+        !editingId &&
+        Array.isArray(cats) &&
+        cats.length > 0 &&
+        Array.isArray(pms) &&
+        pms.length > 0
+      ) {
         // Find first category that matches current type
-        const firstOfType = cats.find(c => c.type === type);
+        const firstOfType = cats.find((c) => c.type === type);
         setFormValues((prev) => ({
           ...prev,
           category_id: firstOfType ? firstOfType.id : cats[0].id,
@@ -124,9 +130,9 @@ const TransactionList = () => {
     setType("expense");
     // Reset category to first expense category if available
     if (categories.length > 0) {
-      const firstExpense = categories.find(c => c.type === "expense");
+      const firstExpense = categories.find((c) => c.type === "expense");
       if (firstExpense) {
-        setFormValues(prev => ({ ...prev, category_id: firstExpense.id }));
+        setFormValues((prev) => ({ ...prev, category_id: firstExpense.id }));
       }
     }
     setShowModal(false);
@@ -232,7 +238,10 @@ const TransactionList = () => {
         {/* Transaction Form Modal */}
         {showModal && (
           <div className="modal-backdrop" onClick={() => setShowModal(false)}>
-            <div className="modal-content-wrapper transaction-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="modal-content-wrapper transaction-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Card className="border-0 shadow-lg p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <h3 className="h5 fw-bold mb-0">
@@ -252,10 +261,18 @@ const TransactionList = () => {
                     onClick={() => {
                       setType("income");
                       // Switch to first income category if current one is not income
-                      const currentCat = categories.find(c => String(c.id) === String(formValues.category_id));
+                      const currentCat = categories.find(
+                        (c) => String(c.id) === String(formValues.category_id),
+                      );
                       if (!currentCat || currentCat.type !== "income") {
-                        const firstIncome = categories.find(c => c.type === "income");
-                        if (firstIncome) setFormValues(prev => ({ ...prev, category_id: firstIncome.id }));
+                        const firstIncome = categories.find(
+                          (c) => c.type === "income",
+                        );
+                        if (firstIncome)
+                          setFormValues((prev) => ({
+                            ...prev,
+                            category_id: firstIncome.id,
+                          }));
                       }
                     }}
                     className={`btn w-100 ${type === "income" ? "btn-success text-white" : "btn-outline-secondary"}`}
@@ -273,10 +290,18 @@ const TransactionList = () => {
                     onClick={() => {
                       setType("expense");
                       // Switch to first expense category if current one is not expense
-                      const currentCat = categories.find(c => String(c.id) === String(formValues.category_id));
+                      const currentCat = categories.find(
+                        (c) => String(c.id) === String(formValues.category_id),
+                      );
                       if (!currentCat || currentCat.type !== "expense") {
-                        const firstExpense = categories.find(c => c.type === "expense");
-                        if (firstExpense) setFormValues(prev => ({ ...prev, category_id: firstExpense.id }));
+                        const firstExpense = categories.find(
+                          (c) => c.type === "expense",
+                        );
+                        if (firstExpense)
+                          setFormValues((prev) => ({
+                            ...prev,
+                            category_id: firstExpense.id,
+                          }));
                       }
                     }}
                     className={`btn w-100 ${type === "expense" ? "btn-danger text-white" : "btn-outline-secondary"}`}
@@ -365,7 +390,7 @@ const TransactionList = () => {
                       type="submit"
                       className="w-100"
                       disabled={isSubmitting}
-                        style={{
+                      style={{
                         backgroundColor: "#a8df8e",
                         border: "none",
                         color: "#1a1a1a",
@@ -642,7 +667,10 @@ const TransactionList = () => {
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3"
           style={{ background: "rgba(15, 23, 42, 0.45)", zIndex: 1050 }}
         >
-          <Card className="w-100 transaction-delete-card" style={{ maxWidth: "26rem" }}>
+          <Card
+            className="w-100 transaction-delete-card"
+            style={{ maxWidth: "26rem" }}
+          >
             <h5 className="mb-2 text-app-primary">Delete Transaction</h5>
             <p className="text-app-secondary mb-4 small">
               Are you sure you want to delete transaction{" "}
