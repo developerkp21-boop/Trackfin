@@ -57,16 +57,12 @@ const TransactionList = () => {
       setPaymentMethods(pms || []);
 
       // Select first options by default if form is empty
-      if (
-        !editingId &&
-        Array.isArray(cats) &&
-        cats.length > 0 &&
-        Array.isArray(pms) &&
-        pms.length > 0
-      ) {
+      if (!editingId && Array.isArray(cats) && cats.length > 0 && Array.isArray(pms) && pms.length > 0) {
+        // Find first category that matches current type
+        const firstOfType = cats.find(c => c.type === type);
         setFormValues((prev) => ({
           ...prev,
-          category_id: cats[0].id,
+          category_id: firstOfType ? firstOfType.id : cats[0].id,
           account_id: pms[0].id,
         }));
       }
@@ -126,6 +122,13 @@ const TransactionList = () => {
     setFormValues(initialForm);
     setEditingId(null);
     setType("expense");
+    // Reset category to first expense category if available
+    if (categories.length > 0) {
+      const firstExpense = categories.find(c => c.type === "expense");
+      if (firstExpense) {
+        setFormValues(prev => ({ ...prev, category_id: firstExpense.id }));
+      }
+    }
     setShowModal(false);
   };
 
@@ -243,34 +246,52 @@ const TransactionList = () => {
                   </button>
                 </div>
 
-                <div className="d-flex flex-column flex-sm-row gap-2 mb-3">
+                <div className="d-flex flex-row gap-2 mb-2">
                   <button
                     type="button"
-                    onClick={() => setType("income")}
+                    onClick={() => {
+                      setType("income");
+                      // Switch to first income category if current one is not income
+                      const currentCat = categories.find(c => String(c.id) === String(formValues.category_id));
+                      if (!currentCat || currentCat.type !== "income") {
+                        const firstIncome = categories.find(c => c.type === "income");
+                        if (firstIncome) setFormValues(prev => ({ ...prev, category_id: firstIncome.id }));
+                      }
+                    }}
                     className={`btn w-100 ${type === "income" ? "btn-success text-white" : "btn-outline-secondary"}`}
                     style={{
                       borderRadius: "12px",
-                      padding: "8px",
+                      padding: "6px",
                       fontWeight: "600",
+                      fontSize: "14px",
                     }}
                   >
                     Income
                   </button>
                   <button
                     type="button"
-                    onClick={() => setType("expense")}
+                    onClick={() => {
+                      setType("expense");
+                      // Switch to first expense category if current one is not expense
+                      const currentCat = categories.find(c => String(c.id) === String(formValues.category_id));
+                      if (!currentCat || currentCat.type !== "expense") {
+                        const firstExpense = categories.find(c => c.type === "expense");
+                        if (firstExpense) setFormValues(prev => ({ ...prev, category_id: firstExpense.id }));
+                      }
+                    }}
                     className={`btn w-100 ${type === "expense" ? "btn-danger text-white" : "btn-outline-secondary"}`}
                     style={{
                       borderRadius: "12px",
-                      padding: "8px",
+                      padding: "6px",
                       fontWeight: "600",
+                      fontSize: "14px",
                     }}
                   >
                     Expense
                   </button>
                 </div>
 
-                <form className="row g-2 g-sm-3" onSubmit={handleSubmit}>
+                <form className="row g-2" onSubmit={handleSubmit}>
                   <div className="col-md-6">
                     <Input
                       label="Date"
@@ -301,13 +322,13 @@ const TransactionList = () => {
                       required
                     >
                       <option value="">Select category</option>
-                      {(Array.isArray(categories) ? categories : []).map(
-                        (item) => (
+                      {(Array.isArray(categories) ? categories : [])
+                        .filter((item) => item.type === type)
+                        .map((item) => (
                           <option key={item.id} value={item.id}>
                             {item.name}
                           </option>
-                        ),
-                      )}
+                        ))}
                     </Select>
                   </div>
                   <div className="col-md-6">
@@ -344,12 +365,12 @@ const TransactionList = () => {
                       type="submit"
                       className="w-100"
                       disabled={isSubmitting}
-                      style={{
+                        style={{
                         backgroundColor: "#a8df8e",
                         border: "none",
                         color: "#1a1a1a",
                         borderRadius: "12px",
-                        padding: "12px",
+                        padding: "10px",
                         fontWeight: "700",
                       }}
                     >

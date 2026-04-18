@@ -146,15 +146,24 @@
   }
 
   .modal-backdrop {
-    padding: 1rem !important;
+    padding: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .modal-content-wrapper {
-    max-height: 90vh !important;
-    overflow-y: auto !important;
+    max-height: 95vh !important;
     width: 100% !important;
-    margin: auto !important;
-    border-radius: 1.5rem !important;
+    margin: 0 !important;
+    border-radius: 1.25rem !important;
+    overflow-y: auto !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .modal-content-wrapper .card {
+    padding: 1rem !important;
+    border-radius: 1.25rem !important;
   }
 
   .modal-content-wrapper::-webkit-scrollbar {
@@ -240,8 +249,15 @@
 
 /* Modal form refinement */
 .modal-content-wrapper .form-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #64748b;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
+}
+
+.modal-content-wrapper .form-control,
+.modal-content-wrapper .form-select {
+  height: 38px !important;
+  font-size: 0.9rem !important;
+  padding: 0.5rem 0.75rem !important;
 }
