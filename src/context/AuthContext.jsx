@@ -14,7 +14,10 @@ import {
   PROFILE_PASSWORD_ENDPOINT,
 } from "../services/api";
 import { ENABLE_AUTH_GUARD } from "../config/featureFlags";
-import { requestForToken, onMessageListener } from "../services/firebase";
+import {
+  requestForToken,
+  subscribeToForegroundMessages,
+} from "../services/firebase";
 
 const AuthContext = createContext(null);
 
@@ -194,6 +197,25 @@ const AuthProvider = ({ children }) => {
       isMounted = false;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Listen for foreground FCM messages and prompt notification refresh in UI.
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = subscribeToForegroundMessages((payload) => {
+      const notification = payload?.notification || {};
+      const data = payload?.data || {};
+      const title = notification.title || data.title || "New notification";
+      const message = notification.body || data.body || "";
+
+      toast.success(message ? `${title}: ${message}` : title);
+      window.dispatchEvent(new CustomEvent("trackfin:notification-received"));
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user]);
 
   // Inactivity Timer (120 minutes)
   useEffect(() => {

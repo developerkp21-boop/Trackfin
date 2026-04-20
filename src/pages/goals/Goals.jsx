@@ -6,7 +6,6 @@ import {
   Plus as PlusIcon,
   Pencil,
   Loader2,
-  RefreshCcw,
 } from "lucide-react";
 import PageHeader from "../../components/PageHeader";
 import Card from "../../components/Card";
@@ -60,10 +59,15 @@ const Goals = () => {
   );
 
   const getDaysLeft = (deadline) => {
-    if (!deadline) return 0;
+    if (!deadline) return null;
     const today = new Date();
     const due = new Date(deadline);
-    return Math.max(0, Math.ceil((due - today) / (1000 * 60 * 60 * 24)));
+    if (Number.isNaN(due.getTime())) return null;
+
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
+    return Math.round((due - today) / (1000 * 60 * 60 * 24));
   };
 
   const getStatus = (goal) => {
@@ -72,6 +76,7 @@ const Goals = () => {
       : 0;
     const days = getDaysLeft(goal.deadline);
     if (pct >= 100) return { label: "Completed", variant: "success" };
+    if (days !== null && days < 0) return { label: "Overdue", variant: "danger" };
     if (days > 0 && days <= 30 && pct < 80)
       return { label: "At Risk", variant: "danger" };
     if (days > 0 && days <= 60) return { label: "Urgent", variant: "warning" };
@@ -106,7 +111,7 @@ const Goals = () => {
       });
 
       toast.success(`Goal ${editingId ? "updated" : "created"} successfully`);
-      fetchGoals();
+      await fetchGoals();
       setForm(initialForm);
       setEditingId(null);
       setShowForm(false);
@@ -120,7 +125,10 @@ const Goals = () => {
 
   const handleAddSavings = async (goalId) => {
     const amount = Number(addSavings[goalId] || 0);
-    if (!amount) return;
+    if (!amount || amount <= 0) {
+      toast.error("Please enter an amount greater than 0");
+      return;
+    }
 
     try {
       await apiRequest(`${GOALS_ENDPOINT}/${goalId}/add-savings`, {
@@ -128,7 +136,7 @@ const Goals = () => {
         body: JSON.stringify({ amount }),
       });
       toast.success("Savings added successfully");
-      fetchGoals();
+      await fetchGoals();
       setAddSavings((prev) => ({ ...prev, [goalId]: "" }));
     } catch (error) {
       console.error("Failed to add savings:", error);
@@ -224,6 +232,8 @@ const Goals = () => {
                 label="Target Amount ($)"
                 name="targetAmount"
                 type="number"
+                min="0"
+                step="0.01"
                 placeholder="50000"
                 value={form.targetAmount}
                 onChange={handleChange}
@@ -236,6 +246,8 @@ const Goals = () => {
                   label="Already Saved ($)"
                   name="savedAmount"
                   type="number"
+                  min="0"
+                  step="0.01"
                   placeholder="0"
                   value={form.savedAmount}
                   onChange={handleChange}
@@ -417,9 +429,11 @@ const Goals = () => {
                               {goal.deadline}
                             </span>
                             <span
-                              className={`ms-2 fw-semibold ${days <= 30 ? "text-danger" : days <= 60 ? "text-warning" : "text-success"}`}
+                              className={`ms-2 fw-semibold ${days !== null && days < 0 ? "text-danger" : days <= 30 ? "text-danger" : days <= 60 ? "text-warning" : "text-success"}`}
                             >
-                              ({days} days left)
+                              {days !== null && days < 0
+                                ? `(${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"} overdue)`
+                                : `(${days ?? 0} days left)`}
                             </span>
                           </p>
                         </div>
@@ -430,6 +444,8 @@ const Goals = () => {
                         <div className="d-flex gap-2">
                           <input
                             type="number"
+                            min="0.01"
+                            step="0.01"
                             className="form-control form-control-sm rounded-3"
                             placeholder="Add savings..."
                             value={addSavings[goal.id] || ""}

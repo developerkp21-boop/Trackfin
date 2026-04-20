@@ -24,4 +24,13 @@ dist-ssr
 *.sw?
 *.txt
 *.md
+*.env
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+*.log
+*.tsbuildinfo
+*.tsbuildinfo.*
+*.tsbuildinfo.json         
 

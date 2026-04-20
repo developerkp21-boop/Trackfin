@@ -22,16 +22,22 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    // Extract data payload to display customized notification
     const data = payload.data || {};
-    const notificationTitle = data.title || 'New Message';
+    const notification = payload.notification || {};
+    const notificationTitle = notification.title || data.title || 'New Message';
     const notificationOptions = {
-        body: data.body || '',
+        body: notification.body || data.body || '',
         icon: data.icon || '/logo-192.png',
         data: {
-            url: data.click_action || '/dashboard' // Used to open url on click
+            url: data.link || data.click_action || '/dashboard'
         }
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const targetUrl = event.notification?.data?.url || '/dashboard';
+    event.waitUntil(clients.openWindow(targetUrl));
 });

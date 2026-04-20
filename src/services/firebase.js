@@ -1,55 +1,87 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyB3KJi3Pe51WYzpVM6WHrUH59ITAlD48V0",
-    authDomain: "trackfin-8e4af.firebaseapp.com",
-    projectId: "trackfin-8e4af",
-    storageBucket: "trackfin-8e4af.firebasestorage.app",
-    messagingSenderId: "605718860717",
-    appId: "1:605718860717:web:703231cc8d78576fa60724",
-    measurementId: "G-7N0VNDBJGJ"
+  apiKey: "AIzaSyB3KJi3Pe51WYzpVM6WHrUH59ITAlD48V0",
+  authDomain: "trackfin-8e4af.firebaseapp.com",
+  projectId: "trackfin-8e4af",
+  storageBucket: "trackfin-8e4af.firebasestorage.app",
+  messagingSenderId: "605718860717",
+  appId: "1:605718860717:web:703231cc8d78576fa60724",
+  measurementId: "G-7N0VNDBJGJ",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export const messaging = getMessaging(app);
+let messaging = null;
 
-// Function to request notification permission and get token
+if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  try {
+    messaging = getMessaging(app);
+  } catch (err) {
+    console.warn("Firebase messaging is not available in this browser.", err);
+  }
+}
+
+export { messaging };
+
 export const requestForToken = async () => {
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            const currentToken = await getToken(messaging, {
-                // Replaced with .env config
-                vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY || 'YOUR_VAPID_KEY_HERE'
-            });
+  if (!messaging || typeof Notification === "undefined") {
+    return null;
+  }
 
-            if (currentToken) {
-                console.log('FCM Token generated successfully');
-                return currentToken;
-            } else {
-                console.log('No registration token available. Request permission to generate one.');
-                return null;
-            }
-        } else {
-            console.log('Notification permission denied by user.');
-            return null;
-        }
-    } catch (err) {
-        console.log('An error occurred while retrieving token. ', err);
-        return null;
+  const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+  if (!vapidKey || vapidKey === "YOUR_VAPID_KEY_HERE") {
+    console.warn("VITE_FIREBASE_VAPID_KEY is missing; skipping FCM token sync.");
+    return null;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      return null;
     }
+
+    const swRegistration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js",
+    );
+
+    const currentToken = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: swRegistration,
+    });
+
+    return currentToken || null;
+  } catch (err) {
+    console.warn("An error occurred while retrieving FCM token.", err);
+    return null;
+  }
 };
 
-// Function to handle foreground messages
+export const subscribeToForegroundMessages = (callback) => {
+  if (!messaging || typeof callback !== "function") {
+    return () => {};
+  }
+
+  try {
+    return onMessage(messaging, callback);
+  } catch (err) {
+    console.warn("Unable to subscribe to foreground FCM messages.", err);
+    return () => {};
+  }
+};
+
 export const onMessageListener = () =>
-    new Promise((resolve) => {
-        onMessage(messaging, (payload) => {
-            resolve(payload);
-        });
-    });
+  new Promise((resolve, reject) => {
+    if (!messaging) {
+      resolve(null);
+      return;
+    }
+
+    try {
+      onMessage(messaging, (payload) => {
+        resolve(payload);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
